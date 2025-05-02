@@ -1,10 +1,28 @@
 {
-	"dependencies": {
-		"@types/express": "^5.0.1",
-		"@types/morgan": "^1.9.9",
-		"dotenv": "^16.5.0",
-		"express": "^5.1.0",
-		"morgan": "^1.10.0"
-	},
-	"packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
+  "scripts": {
+    "dev": "tsx --watch src/index.ts",
+    "db:push": "pnpx prisma@latest db push",
+    "db:generate": "pnpx prisma@latest generate"
+  },
+  "dependencies": {
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "@prisma/client": "^6.7.0",
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.3",
+    "arctic": "^3.6.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0",
+    "node": "^22.15.0",
+    "tsx": "^4.19.4",
+    "zod": "^3.24.3"
+  },
+  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "prisma": "^6.7.0"
+  }
 }
