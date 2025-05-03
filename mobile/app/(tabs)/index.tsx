@@ -1,12 +1,58 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts } from 'expo-font';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 export default function HomeScreen() {
+  // Image URL for text background
+  const imageUrl = "https://images.pexels.com/photos/4039710/pexels-photo-4039710.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+
+  // Function to create text with image background
+  const renderTextWithImageBackground = (text, textStyle) => {
+    // Determine if this is the title text ("I'm allergic to")
+    const isTitle = textStyle === styles.allergicText;
+    
+    // Adjust container width based on text length and font size
+    const containerWidth = textStyle.fontSize * text.length * (isTitle ? 0.4 : 0.65);
+    
+    return (
+      <View style={{ alignSelf: 'flex-end' }}>
+        <MaskedView
+          maskElement={
+            <Text style={textStyle}>
+              {text}
+            </Text>
+          }
+        >
+          <View style={{
+            height: textStyle.fontSize * 1.2,
+            width: containerWidth,
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}>
+            <ImageBackground
+              source={{ uri: imageUrl }}
+              style={{
+                width: textStyle.fontSize * text.length * 30, // Wider than needed
+                height: textStyle.fontSize * 4, // Taller than needed for zoom effect
+                right: -270, // Move image to the right
+                top: 40,  // Move image up (negative value moves up)
+              }}
+            >
+              <Text style={[textStyle, { opacity: 0 }]}>
+                {text}
+              </Text>
+            </ImageBackground>
+          </View>
+        </MaskedView>
+      </View>
+    );
+  };
+
   return (
     <LinearGradient
-      colors={['#414a15', '#828e3f', '#d4b84d']} // Dark olive green to yellow gradient
+      colors={['#414a15','#414a15','#414a15','#f1da71']} // Dark Olive Green to Light Sea Green
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.container}
@@ -18,24 +64,38 @@ export default function HomeScreen() {
         
         {/* Allergen text content */}
         <View style={styles.allergenContent}>
-          <Text style={styles.allergicText}>I'm allergic to</Text>
-          <Text style={styles.allergenItem}>Gluten</Text>
-          <Text style={styles.allergenItem}>Peanuts</Text>
-          <Text style={styles.allergenItem}>Pistachios</Text>
+          {/* Apply image background to "I'm allergic to" text */}
+          {renderTextWithImageBackground("I'm allergic to", styles.allergicText)}
+          
+          {/* Allergens with image backgrounds */}
+          {renderTextWithImageBackground("Gluten", styles.allergenItem)}
+          {renderTextWithImageBackground("Peanuts", styles.allergenItem)}
+          {renderTextWithImageBackground("Pistachios", styles.allergenItem)}
           
           {/* Background circle for the "Aller free" overlay */}
           <View style={styles.allerFreeOuterContainer}>
             <View style={styles.allerFreeBackCircle}></View>
-            <View style={styles.allerFreeCircle}>
+            <ImageBackground
+              source={{ uri: "https://i.imgur.com/hCzWKIl.png" }} // Using the same texture image as text for consistency
+              style={styles.allerFreeCircle}
+              imageStyle={{ 
+                borderRadius: 90, // Same as the container to make the image rounded
+                opacity: 0.9, // Slightly transparent to ensure text readability
+              }}
+            >
               <Text style={styles.allerText}>Aller</Text>
               <Text style={styles.freeText}>free</Text>
-            </View>
+            </ImageBackground>
           </View>
           
-          <Text style={styles.allergenItem}>Corn</Text>
-          <Text style={styles.allergenItem}>Soy</Text>
-          <Text style={styles.allergenItem}>Shellfish</Text>
-          <Text style={[styles.allergenItem, styles.fadedAllergen]}>Avocados</Text>
+          {renderTextWithImageBackground("Corn", styles.allergenItem)}
+          {renderTextWithImageBackground("Soy", styles.allergenItem)}
+          {renderTextWithImageBackground("Shellfish", styles.allergenItem)}
+          
+          {/* Apply both image background and faded effect to "Avocados" */}
+          <View style={{ opacity: 0.6 }}>
+            {renderTextWithImageBackground("Avocados", styles.allergenItem)}
+          </View>
         </View>
         
         {/* Buttons at bottom */}
@@ -83,17 +143,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#e5a268',
     textAlign: 'right',
-    marginBottom: 10,
   },
   allergenItem: {
     fontSize: 60,
     fontWeight: 'bold',
-    color: '#e5a268',
+    color: '#e5a268', // This color won't be visible with image background
     textAlign: 'right',
     lineHeight: 76,
-  },
-  fadedAllergen: {
-    opacity: 0.6,
+    marginVertical: 4, // Added to ensure proper spacing between items
   },
   allerFreeOuterContainer: {
     position: 'absolute',
