@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   allergenItem: {
-    fontSize: 60,
+    fontSize: 66,
     fontWeight: 'bold',
     color: '#e5a268', // This color won't be visible with image background
     textAlign: 'right',
@@ -167,6 +167,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(130, 142, 63, 0.4)', // Light green with opacity
     left: -15,
     top: -15,
+    marginLeft: 20,
+    marginTop: 20
   },
   allerFreeCircle: {
     width: 180,
@@ -176,6 +178,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden', // To ensure the grain stays within the circle
+    marginLeft: 20,
+    marginTop: 20
   },
   allerText: {
     color: '#ffffff',
