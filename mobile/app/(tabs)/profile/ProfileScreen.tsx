@@ -12,7 +12,7 @@ import {
 import Header from '../../../components/profiles/Header';
 import AllergyDashboard from '../../../components/profiles/AllergyDashboard';
 import ProfileCard from '../../../components/profiles/ProfileCard';
-import AddAllergyModal from '../../../components/profiles/AlleryModal';
+import AddAllergyModal from '../../../components/profiles/AllergyModal';
 import AddOtherAllergenProfileModal from '../../../components/profiles/ProfileAdd';
 
 export default function ProfileDashboard() {
@@ -63,7 +63,7 @@ export default function ProfileDashboard() {
             <AllergyDashboard
               key={i}
               name={a.name}
-              severity={a.severity}
+              severity={['Severe', 'Medium', 'Slight'].includes(a.severity) ? a.severity as 'Severe' | 'Medium' | 'Slight' : 'Slight'}
               onRemove={() =>
                 setMainAllergies(prev => prev.filter((_, idx) => idx !== i))
               }
