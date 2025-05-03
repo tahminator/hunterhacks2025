@@ -30,7 +30,7 @@ export default defineConfig({
           __dirname,
           'src/snipping/background.tsx'
         ),
-        // snippingIndex: path.resolve(__dirname, 'src/popup/index.html'),
+        // snippingCanvas: path.resolve(__dirname, 'src/snipping/offscreen.tsx'),
       },
       output: {
         entryFileNames: (chunkInfo) => {
@@ -39,6 +39,8 @@ export default defineConfig({
               return '[name].js'
             case 'snippingBackground':
               return '[name].js'
+            // case 'snippingCanvas':
+            //   return '[name].js'
             default:
               return 'assets/[name]-[hash].js'
           }

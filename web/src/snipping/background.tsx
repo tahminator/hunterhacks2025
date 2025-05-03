@@ -20,3 +20,27 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     })
   }
 })
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === 'capture') {
+    chrome.tabs
+      .captureVisibleTab(null!, { format: 'png' })
+      .then(async (dataUrl) => {
+        console.log('Sending data...', dataUrl)
+        await chrome.action.openPopup()
+        chrome.runtime
+          .sendMessage({
+            target: 'check-image',
+            data: {
+              dataUrl: dataUrl,
+              x: message.x,
+              y: message.y,
+              w: message.w,
+              h: message.h,
+            },
+          })
+          .then(() => console.log('sent message sucessfully'))
+          .catch(() => console.log('no receiver'))
+      })
+  }
+})
