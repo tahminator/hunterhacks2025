@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import Header from '../../../components/profiles/Header';
-import AllergyDashboard from '../../../components/profiles/Allery';
+import AllergyDashboard from '../../../components/profiles/AllergyDashboard';
 import ProfileCard from '../../../components/profiles/ProfileCard';
 import AddAllergyModal from '../../../components/profiles/AlleryModal';
 import AddOtherAllergenProfileModal from '../../../components/profiles/ProfileAdd';
@@ -40,11 +40,9 @@ export default function ProfileDashboard() {
   const handleRemoveProfile = (index: number) => {
     setProfiles(prev => prev.filter((_, i) => i !== index));
   };
-  const [mainAllergies, setMainAllergies] = useState([
-    { name: 'Gluten', severity: 'Severe', color: 'darkred' },
-    { name: 'Strawberries', severity: 'Severe', color: 'darkred' },
-  ]);
-  
+  const [mainAllergies, setMainAllergies] = useState<
+  { name: string; severity: string; color?: string }[]
+>([]);
   const [profiles, setProfiles] = useState<
     { name: string; allergies: { name: string; severity: string; color?: string }[] }[]
   >([]);
@@ -98,7 +96,7 @@ export default function ProfileDashboard() {
                 ...allergy,
                 color: allergy.color ?? 'defaultColor', 
               }))}
-              onRemove={() => handleRemoveProfile(index)}
+              onDelete={() => handleRemoveProfile(index)}
             />
           ))}
 

@@ -30,7 +30,7 @@ type Props = {
   onDelete?: () => void;
 };
 
-export default function AddOtherAllergenProfileModal({
+export default function ProfileAdd({
   visible,
   onClose,
   onSubmit,
@@ -75,10 +75,10 @@ export default function AddOtherAllergenProfileModal({
           <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
               <Text style={styles.header}>
-                {initialProfileName ? 'Edit Allergen Profile' : 'Add Allergen Profile'}
+                {initialProfileName ? 'Edit Profile' : 'Profile'}
               </Text>
 
-              {/* Only show username field for new profiles */}
+              {}
               {!initialProfileName && (
                 <>
                   <Text style={styles.label}>Search by Username (optional):</Text>
@@ -212,4 +212,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   doneButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-}); 
+});

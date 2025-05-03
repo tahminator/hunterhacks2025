@@ -4,16 +4,12 @@ import {
   Text,
   StyleSheet,
   ImageBackground,
-  Button,
+  TouchableOpacity,
   Alert,
 } from 'react-native';
-import AddOtherAllergenProfileModal from './ProfileAdd';
+import ProfileAdd from './ProfileAdd';
 
-type Allergy = {
-  name: string;
-  severity: string;
-  color: string;
-};
+type Allergy = { name: string; severity: string; color?: string };
 
 type Props = {
   name: string;
@@ -48,7 +44,6 @@ export default function ProfileCard({
     onDelete?.();
   };
 
-  // Optional: Confirm before deleting
   const confirmDelete = () => {
     Alert.alert(
       'Delete Profile',
@@ -77,16 +72,17 @@ export default function ProfileCard({
         resizeMode="cover"
         imageStyle={styles.swooshImage}
       >
-        <Button title="Edit" color="#fff" onPress={() => setModalVisible(true)} />
+        <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.editText}>Edit</Text>
+        </TouchableOpacity>
       </ImageBackground>
 
-      <AddOtherAllergenProfileModal
+      <ProfileAdd
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSubmit={handleModalSubmit}
         initialProfileName={name}
         initialAllergies={allergies}
-        // You can toggle between confirmDelete and handleDelete
         onDelete={confirmDelete}
       />
     </View>
@@ -96,14 +92,14 @@ export default function ProfileCard({
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    overflow: 'hidden',
     backgroundColor: '#fff',
-    marginVertical: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginVertical: 10,
   },
   leftSection: {
     flex: 2,
@@ -113,12 +109,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 70,
-    padding: 5,
+    minWidth: 80,
   },
   swooshImage: {
-    width: '100%',
-    height: '100%',
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  editButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  editText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   name: {
     fontSize: 18,
