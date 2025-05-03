@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  Modal, 
-  Animated, 
-  Dimensions, 
-  KeyboardAvoidingView, 
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 const { height } = Dimensions.get('window');
 
-const LoginModal = ({ visible, onClose }) => {
+const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
   const [slideAnim] = useState(new Animated.Value(height));
-  const [isLogin, setIsLogin] = useState(true);
-  
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+
   useEffect(() => {
     if (visible) {
+      // Set the form mode based on initialMode prop each time the modal opens
+      setIsLogin(initialMode === 'login');
+
       // Animate the modal sliding up from the bottom
       Animated.timing(slideAnim, {
         toValue: 0,
@@ -37,7 +41,7 @@ const LoginModal = ({ visible, onClose }) => {
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [visible, initialMode]);
 
   const handleClose = () => {
     Animated.timing(slideAnim, {
@@ -53,31 +57,31 @@ const LoginModal = ({ visible, onClose }) => {
     <View style={styles.formContainer}>
       <View style={styles.inputContainer}>
         <Ionicons name="person-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           placeholder="Username or Email"
           placeholderTextColor="#666"
         />
       </View>
-      
+
       <View style={styles.inputContainer}>
         <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           placeholder="Password"
           placeholderTextColor="#666"
           secureTextEntry
         />
       </View>
-      
+
       <TouchableOpacity style={styles.forgotPassword}>
         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity style={styles.authButton}>
         <Text style={styles.authButtonText}>Login</Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={() => setIsLogin(false)}>
         <Text style={styles.switchModeText}>Don't have an account? Sign up</Text>
       </TouchableOpacity>
@@ -86,68 +90,70 @@ const LoginModal = ({ visible, onClose }) => {
 
   const renderRegisterForm = () => (
     <View style={styles.formContainer}>
-      <View style={styles.inputContainer}>
-        <Ionicons name="person-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
-          placeholder="Username"
-          placeholderTextColor="#666"
-        />
-      </View>
-      
-      <View style={styles.inputContainer}>
-        <TextInput 
-          style={styles.input} 
-          placeholder="First Name"
-          placeholderTextColor="#666"
-        />
-      </View>
-      
-      <View style={styles.inputContainer}>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Last Name"
-          placeholderTextColor="#666"
-        />
-      </View>
-      
-      <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
-          placeholder="Password"
-          placeholderTextColor="#666"
-          secureTextEntry
-        />
-      </View>
-      
-      <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
-          placeholder="Re-enter Password"
-          placeholderTextColor="#666"
-          secureTextEntry
-        />
-      </View>
-      
-      <View style={styles.inputContainer}>
-        <Ionicons name="mail-outline" size={24} color="#333" style={styles.inputIcon} />
-        <TextInput 
-          style={styles.input} 
-          placeholder="Email"
-          placeholderTextColor="#666"
-          keyboardType="email-address"
-        />
-      </View>
-      
-      <TouchableOpacity style={styles.authButton}>
-        <Text style={styles.authButtonText}>Register</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity onPress={() => setIsLogin(true)}>
-        <Text style={styles.switchModeText}>Already have an account? Login</Text>
-      </TouchableOpacity>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={24} color="#333" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#666"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            placeholderTextColor="#666"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#666"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#666"
+            secureTextEntry
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Re-enter Password"
+            placeholderTextColor="#666"
+            secureTextEntry
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={24} color="#333" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#666"
+            keyboardType="email-address"
+          />
+        </View>
+
+        <TouchableOpacity style={styles.authButton}>
+          <Text style={styles.authButtonText}>Register</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => setIsLogin(true)}>
+          <Text style={styles.switchModeText}>Already have an account? Login</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 
@@ -160,19 +166,20 @@ const LoginModal = ({ visible, onClose }) => {
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
-            <KeyboardAvoidingView 
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : null}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
               style={styles.keyboardAvoidingView}
             >
-              <Animated.View 
+              <Animated.View
                 style={[
-                  styles.modalContainer, 
+                  styles.modalContainer,
                   { transform: [{ translateY: slideAnim }] }
                 ]}
               >
                 <LinearGradient
-                  colors={['#c4d157', '#a6af4b', '#828e3f']} 
-                  style={styles.modalContent}
+                  colors={['#c4d157', '#a6af4b', '#828e3f']}
+                  style={styles.headerGradient}
                 >
                   <View style={styles.headerContainer}>
                     <Text style={styles.title}>
@@ -182,9 +189,11 @@ const LoginModal = ({ visible, onClose }) => {
                       <Text style={styles.closeButtonText}>X</Text>
                     </TouchableOpacity>
                   </View>
-                  
-                  {isLogin ? renderLoginForm() : renderRegisterForm()}
                 </LinearGradient>
+
+                <View style={styles.whiteFormContainer}>
+                  {isLogin ? renderLoginForm() : renderRegisterForm()}
+                </View>
               </Animated.View>
             </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
@@ -209,16 +218,23 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     overflow: 'hidden',
     backgroundColor: '#fff',
+    maxHeight: '100%', // Limit the modal height to prevent it from going off-screen
+
   },
-  modalContent: {
+  headerGradient: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 10,
+  },
+  whiteFormContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    paddingBottom: 20,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 10,
   },
   title: {
     fontSize: 32,

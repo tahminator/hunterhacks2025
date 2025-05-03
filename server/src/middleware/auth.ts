@@ -61,6 +61,8 @@ export const authMiddleware = async (
   setSessionTokenCookie(res, session.id, session.expiresAt);
 
   res.locals.session = session;
-  res.locals.user = user;
+  // let's not leak the password to the client, even if it's hashed...
+  const { password, ...safeUser } = user;
+  res.locals.user = safeUser;
   return next();
 };
