@@ -8,6 +8,8 @@
     "baseUrl": ".",
     "paths": {
       "@base/*": ["./src/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
     },
     "types": ["node"]
   }
