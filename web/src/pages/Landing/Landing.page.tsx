@@ -22,7 +22,7 @@ function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
           <Title
             key={index}
             style={{
-              fontSize: '3rem',
+              fontSize: '3.3rem',
             }}
           >
             {text}

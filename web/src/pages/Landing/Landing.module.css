@@ -7,20 +7,20 @@
   background: -webkit-linear-gradient(
     180deg,
     rgba(63, 74, 6, 0) 23%,
-    rgba(158, 179, 64, 0.54) 52%,
-    rgba(246, 216, 92, 1) 75%
+    rgba(158, 179, 64, 0.43) 40%,
+    rgba(246, 216, 92, 1) 67%
   );
   background: -moz-linear-gradient(
     180deg,
     rgba(63, 74, 6, 0) 23%,
-    rgba(158, 179, 64, 0.54) 52%,
-    rgba(246, 216, 92, 1) 75%
+    rgba(158, 179, 64, 0.43) 40%,
+    rgba(246, 216, 92, 1) 67%
   );
   background: linear-gradient(
     180deg,
     rgba(63, 74, 6, 0) 23%,
-    rgba(158, 179, 64, 0.54) 52%,
-    rgba(246, 216, 92, 1) 75%
+    rgba(158, 179, 64, 0.43) 40%,
+    rgba(246, 216, 92, 1) 67%
   );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3F4A06", endColorstr="#F6D85C", GradientType=0);
 }
