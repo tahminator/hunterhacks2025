@@ -39,7 +39,15 @@ export async function validateSessionToken(
       id: sessionId,
     },
     include: {
-      user: true,
+      user: {
+        include: {
+          activeProfile: {
+            include: {
+              allergies: true,
+            },
+          },
+        },
+      },
     },
   });
 
