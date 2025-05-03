@@ -24,3 +24,12 @@
   );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3F4A06", endColorstr="#F6D85C", GradientType=0);
 }
+
+.landing-text {
+  background-size: contain;
+  background: url('@assets/landing-bg.jpg');
+  background-repeat: no-repeat;
+  background-clip: text;
+  line-height: 4.5rem !important;
+  color: transparent;
+}

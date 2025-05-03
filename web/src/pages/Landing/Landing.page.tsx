@@ -14,19 +14,24 @@ function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
       pos={'absolute'}
       right={'0'}
     >
-      <Group w={'100%'} justify="flex-end" mb="sm">
-        <Text size="lg">I'm allergic to</Text>
+      <Group w={'100%'} justify="flex-end" mb="xs">
+        <Text size="lg" c={'rgba(216, 111, 59, 1.0)'}>
+          I'm allergic to
+        </Text>
       </Group>
-      <Stack align="flex-end" gap={'1.5rem'}>
+      <Stack align="flex-end" mt={'-1rem'} gap={'1.5rem'}>
         {textArray.map((text, index) => (
-          <Title
-            key={index}
-            style={{
-              fontSize: '3.3rem',
-            }}
-          >
-            {text}
-          </Title>
+          <Box h={'2.5rem'}>
+            <Title
+              key={index}
+              style={{
+                fontSize: '3.4rem',
+              }}
+              className={styles.landingText}
+            >
+              {text}
+            </Title>
+          </Box>
         ))}
       </Stack>
     </Box>
@@ -72,10 +77,10 @@ function LandingPage() {
         style={{ zIndex: 99 }}
       >
         <Group>
-          <Button flex={2} color="olivine.9">
+          <Button flex={2} color="olivine.8">
             Login
           </Button>
-          <Button flex={1} color="olivine.8">
+          <Button flex={1} color="olivine.6">
             Register
           </Button>
         </Group>

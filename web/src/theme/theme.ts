@@ -2,23 +2,23 @@ import { createTheme, rem, MantineColorsTuple } from '@mantine/core'
 
 /**
  * Defines the shades for the primary green
- * Base Color: Index 9
+ * Base Color: Index 8
  */
 const olivine: MantineColorsTuple = [
   '#fbfdec',
   '#f5fbd8',
   '#ebf7ab',
   '#e0f37a',
-  '#d6ef54',
   '#d0ed3d',
   '#cdec32',
-  '#b5d126',
-  '#a0ba1d',
-  '#3F4A06',
+  '#718f10',
+  '#55630d',
+  '#253603',
+  '#182902',
 ]
 
 /**
- * Defines the shades for the secondary orange
+ * Defines the shades for the neon Green
  * Base Color: Index 6
  */
 const neonGreen: MantineColorsTuple = [
@@ -36,7 +36,7 @@ const neonGreen: MantineColorsTuple = [
 
 /**
 
- * Defines the shades for the background green
+ * Defines the shades for the background off white
  * Base Color: Index 0
  */
 const offWhite: MantineColorsTuple = [
