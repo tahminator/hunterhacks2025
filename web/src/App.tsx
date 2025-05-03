@@ -1,8 +1,7 @@
-import { MemoryRouter, Routes, Route, Link } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { Box, MantineProvider } from '@mantine/core'
 import LandingPage from '@pages/Landing'
 import { AppTheme } from '@base/theme/theme'
-import '@base/theme/theme.module.css'
 import '@mantine/core/styles.css'
 import { appHeight, appWidth } from '@base/theme/theme'
 
