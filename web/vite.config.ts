@@ -25,19 +25,25 @@ export default defineConfig({
       input: {
         popup: path.resolve(__dirname, 'src/popup/main.tsx'),
         popupIndex: path.resolve(__dirname, 'index.html'),
-        snipping: path.resolve(__dirname, 'src/snipping/main.tsx'),
+        snipping: path.resolve(__dirname, 'src/snipping/content.tsx'),
+        snippingBackground: path.resolve(
+          __dirname,
+          'src/snipping/background.tsx'
+        ),
         // snippingIndex: path.resolve(__dirname, 'src/popup/index.html'),
       },
       output: {
         entryFileNames: (chunkInfo) => {
           switch (chunkInfo.name) {
             case 'snipping':
-              return '[name].js' 
+              return '[name].js'
+            case 'snippingBackground':
+              return '[name].js'
             default:
               return 'assets/[name]-[hash].js'
           }
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 })

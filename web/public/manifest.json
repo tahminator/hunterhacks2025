@@ -2,14 +2,21 @@
   "manifest_version": 3,
   "name": "hunterhacks-allergens",
   "version": "1.0.0",
-  "permissions": [
-    "scripting"
-  ],
+  "permissions": ["activeTab", "tabs", "scripting"],
   "action": {
     "default_title": "Hunter Hacks 2025",
-    "default_popup" : "index.html"
-  }, 
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "snippingBackground.js"
+  },
   "icons": {
-    "32" : "icon32.png"
-  }
+    "32": "icon32.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["style.css"]
+    }
+  ]
 }

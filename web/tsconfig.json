@@ -13,6 +13,6 @@
       "@components/*": ["./src/popup/components/*"],
       "@assets/*": ["./src/assets/*"]
     },
-    "types": ["node"]
+    "types": ["node", "chrome"]
   }
 }
