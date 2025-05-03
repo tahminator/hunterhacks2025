@@ -8,5 +8,8 @@
   "action": {
     "default_title": "Hunter Hacks 2025",
     "default_popup" : "index.html"
+  }, 
+  "icons": {
+    "32" : "icon32.png"
   }
 }
