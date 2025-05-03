@@ -1,10 +1,13 @@
 import {
   Box,
+  Button,
+  Divider,
   Group,
   Image,
   ScrollArea,
   Stack,
   Text,
+  TextInput,
   Title,
 } from '@mantine/core'
 import { useEffect, useState } from 'react'
@@ -19,8 +22,10 @@ import AllergyItem from '@components/AllergyItem'
 import WaveLgURL from './wave.lg.svg'
 import WaveMdURL from './wave.md.svg'
 import WaveSmURL from './wave.sm.svg'
+import { appHeight } from '@base/theme/theme'
 
 export function PromptPage() {
+  const [resText, setResText] = useState('')
   const [isOnlyUser, setIsOnlyUsers] = useState(true)
   const activeUserAllergies: Allergy[] = [
     { name: 'Gluten', severity: Severity.low },
@@ -33,50 +38,70 @@ export function PromptPage() {
   ]
 
   return (
-    <Stack>
-      <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
-        {/* <Image></Image> */}
-        <Stack aria-label="waves" gap={'xs'} pos={'absolute'} bottom={'-14px'}>
-          <Image src={WaveSmURL} />
-          <Image src={WaveMdURL} />
-          <Image src={WaveLgURL} />
-        </Stack>
-      </Box>
-      <Stack pl={'lg'} py={'sm'} gap={'5px'} w={'100%'}>
-        <Title>Profiles</Title>
-        <Group>
-          <Title order={2}>Checking Just for You?</Title>
-          <Switch
-            checked={isOnlyUser}
-            onChange={(event) => {
-              setIsOnlyUsers(event.currentTarget.checked)
-            }}
-            color={'olivine.6'}
-            size="md"
-          ></Switch>
-          <Text size="sm" hidden={!isOnlyUser}>
-            Just making sure, we know you can't eat:
-          </Text>
-          <Text size="sm" hidden={isOnlyUser}>
-            Let's make everyone can eat, too.
-          </Text>
-        </Group>
-        <Box w={'90%'}>
-          <Box hidden={!isOnlyUser}>
-            <ScrollArea w={'100%'} h={'235px'} scrollbars={'y'} type={'auto'}>
+    <ScrollArea h={appHeight}>
+      <Stack>
+        <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
+          {/* <Image></Image> */}
+          <Stack
+            aria-label="waves"
+            gap={'xs'}
+            pos={'absolute'}
+            bottom={'-14px'}
+          >
+            <Image src={WaveSmURL} />
+            <Image src={WaveMdURL} />
+            <Image src={WaveLgURL} />
+          </Stack>
+        </Box>
+        <Stack px={'lg'} py={'sm'} gap={'5px'} w={'100%'}>
+          <Title>Restaurant Name</Title>
+          First, let us know the name of the restaurant you're eating at.
+          <TextInput
+            value={resText}
+            onChange={(event) => setResText(event.currentTarget.value)}
+            withAsterisk
+            placeholder="eg. McDonalds"
+            variant="filled"
+            label="Enter Here"
+          />
+          <Divider my={'md'} />
+          <Title>Profiles</Title>
+          <Group>
+            <Title order={2}>Checking Just for You?</Title>
+            <Switch
+              checked={isOnlyUser}
+              onChange={(event) => {
+                setIsOnlyUsers(event.currentTarget.checked)
+              }}
+              color={'olivine.6'}
+              size="md"
+            ></Switch>
+            <Text size="sm" hidden={!isOnlyUser}>
+              Just making sure, we know you can't eat:
+            </Text>
+            <Text size="sm" hidden={isOnlyUser}>
+              Let's make sure everyone can eat, too.
+            </Text>
+          </Group>
+          <Box w={'100%'}>
+            <Box hidden={!isOnlyUser}>
               <Stack h={'100%'} w={'95%'} gap={'0'}>
                 {activeUserAllergies.map((allergy: Allergy) => {
                   return <AllergyItem key={allergy.name} allergy={allergy} />
                 })}
               </Stack>
-            </ScrollArea>
+            </Box>
+            <Box hidden={isOnlyUser}>
+              <AllergyCard
+                profileName="awd"
+                allergyList={activeUserAllergies}
+              />
+            </Box>
           </Box>
-          <Box hidden={isOnlyUser}>
-            <AllergyCard profileName="awd" allergyList={activeUserAllergies} />
-          </Box>
-        </Box>
+        </Stack>
+        <Button fullWidth>Check Allergens</Button>
       </Stack>
-    </Stack>
+    </ScrollArea>
   )
 }
 
