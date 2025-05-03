@@ -1,18 +1,14 @@
+import type { Allergy } from '@base/types'
 import { Severity } from '@base/types'
 import { ActionIcon, Box, Group, Paper, Text } from '@mantine/core'
 import { RingProgress } from '@mantine/core'
 
 interface AllergyItemProps {
-  name: string
-  severity: Severity
+  allergy: Allergy
   hideable?: boolean
 }
 
-export function AllergyItem({
-  name,
-  severity,
-  hideable = false,
-}: AllergyItemProps) {
+export function AllergyItem({ allergy, hideable = false }: AllergyItemProps) {
   const getColor = (level: Severity) => {
     switch (level) {
       case Severity.low:
@@ -22,8 +18,8 @@ export function AllergyItem({
         }
       case Severity.med:
         return {
-          fill: '#f06418',
-          root: '#bf4906',
+          fill: '#fc8c0c',
+          root: '#e08641',
         }
       case Severity.high:
         return {
@@ -46,7 +42,7 @@ export function AllergyItem({
   //   const getColor = (level: Severity) => {}
 
   return (
-    <Paper my={'xs'} withBorder  radius={'xl'} shadow={'md'}>
+    <Paper my={'xs'} withBorder radius={'xl'} shadow={'md'}>
       <Group
         pos={'relative'}
         h={'2rem'}
@@ -54,17 +50,22 @@ export function AllergyItem({
         style={{ borderRadius: '20px' }}
       >
         <ActionIcon display={!hideable ? 'none' : 'block'} />
-        <Text flex={1}>{name}</Text>
-        <Text  size='sm' fw={"600"} pr={38}>{severity}</Text>
-        <Box pos={'absolute'} right={'-9px'} mx={0}>
+        <Text flex={1}>{allergy.name}</Text>
+        <Text size="sm" fw={'600'} pr={38}>
+          {allergy.severity}
+        </Text>
+        <Box pos={'absolute'} right={'-7px'} mx={0}>
           <RingProgress
-            rootColor={getColor(severity).root}
+            rootColor={getColor(allergy.severity).root}
             transitionDuration={250}
             size={55}
             thickness={8}
             roundCaps
             sections={[
-              { value: getSize(severity), color: getColor(severity).fill },
+              {
+                value: getSize(allergy.severity),
+                color: getColor(allergy.severity).fill,
+              },
             ]}
           />
         </Box>

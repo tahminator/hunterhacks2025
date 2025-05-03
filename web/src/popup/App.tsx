@@ -1,18 +1,18 @@
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { Box, MantineProvider } from '@mantine/core'
-import LandingPage from '@pages/Landing'
+// import LandingPage from '@pages/Landing'
 import { AppTheme } from '@base/theme/theme'
 import '@mantine/core/styles.css'
+import '@mantine/carousel/styles.css'
 import { appHeight, appWidth } from '@base/theme/theme'
-import Prompt, { PromptPage } from '@pages/Prompt/Prompt.page'
-import { AllergyItem } from './components/AllergyStack/Allergy.item'
+import { PromptPage } from '@pages/Prompt/Prompt.page'
 import { Severity } from '@base/types'
+import AllergyCard from './components/AllergyCard'
 
 function App() {
   return (
     <MantineProvider theme={AppTheme}>
       <Box w={appWidth} h={appHeight} bd={'solid 1px black'} pos={'absolute'}>
-        <AllergyItem name="Gluten" severity={Severity.high} />
         <MemoryRouter>
           <Routes>
             {/* <Route path="/" element={<LandingPage />} /> */}
