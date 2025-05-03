@@ -1,8 +1,4 @@
-import {
-  createTheme,
-  rem,
-  MantineColorsTuple,
-} from '@mantine/core'
+import { createTheme, rem, MantineColorsTuple } from '@mantine/core'
 
 /**
  * Defines the shades for the primary green
@@ -18,8 +14,8 @@ const olivine: MantineColorsTuple = [
   '#cdec32',
   '#b5d126',
   '#a0ba1d',
-  '#3F4A06'
-];
+  '#3F4A06',
+]
 
 /**
  * Defines the shades for the secondary orange
@@ -35,8 +31,8 @@ const neonGreen: MantineColorsTuple = [
   '#D4DA0D',
   '#ebf11c',
   '#b9be00',
-  '#94B000'
-];
+  '#94B000',
+]
 
 /**
 
@@ -53,8 +49,8 @@ const offWhite: MantineColorsTuple = [
   '#e4802c',
   '#ca6e20',
   '#b4611a',
-  '#9d5311'
-];
+  '#9d5311',
+]
 
 /**
  * Defines the theming for Mantine & text scaling based off
@@ -79,7 +75,7 @@ export const AppTheme = createTheme({
   colors: {
     neonGreen,
     offWhite,
-    olivine
+    olivine,
   },
   primaryColor: 'neonGreen',
   headings: {
@@ -104,5 +100,8 @@ export const AppTheme = createTheme({
     md: rem(16), // Body text size
     lg: rem(20),
     xl: rem(24),
-  }
+  },
 })
+
+export const appHeight = '550px'
+export const appWidth = '350px'

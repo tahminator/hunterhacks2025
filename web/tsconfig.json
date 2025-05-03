@@ -10,6 +10,7 @@
       "@base/*": ["./src/*"],
       "@pages/*": ["./src/pages/*"],
       "@components/*": ["./src/components/*"],
+      "@assets/*": ["./src/assets/*"]
     },
     "types": ["node"]
   }
