@@ -84,12 +84,12 @@ export const AppTheme = createTheme({
 
     sizes: {
       h1: {
-        fontSize: rem(32),
-        lineHeight: rem(36),
+        fontSize: rem(28),
+        lineHeight: rem(32),
       },
       h2: {
-        fontSize: rem(15),
-        lineHeight: rem(13),
+        fontSize: rem(20),
+        lineHeight: rem(22),
       },
     },
   },
