@@ -44,25 +44,38 @@ profileRouter.get("/all", async (req, res) => {
     return;
   }
 
-  const searchQuery = req.query["query"] as string;
+  const searchQuery = req.query["sq"] as string | undefined;
+  const allergyQuery = req.query["aq"] as string | undefined;
 
   const profile = await db.profile.findMany({
     where: {
       userId: res.locals.user.id,
-      OR: [
-        {
-          firstName: {
-            contains: searchQuery,
-            mode: "insensitive",
+      ...(searchQuery && {
+        OR: [
+          {
+            firstName: {
+              contains: searchQuery,
+              mode: "insensitive",
+            },
+          },
+          {
+            lastName: {
+              contains: searchQuery,
+              mode: "insensitive",
+            },
+          },
+        ],
+      }),
+      ...(allergyQuery && {
+        allergies: {
+          some: {
+            itemName: {
+              contains: allergyQuery,
+              mode: "insensitive",
+            },
           },
         },
-        {
-          lastName: {
-            contains: searchQuery,
-            mode: "insensitive",
-          },
-        },
-      ],
+      }),
     },
     include: {
       allergies: true,
