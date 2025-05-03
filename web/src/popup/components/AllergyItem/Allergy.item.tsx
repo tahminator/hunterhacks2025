@@ -54,7 +54,7 @@ export function AllergyItem({ allergy, hideable = false }: AllergyItemProps) {
         <Text size="sm" fw={'600'} pr={38}>
           {allergy.severity}
         </Text>
-        <Box pos={'absolute'} right={'-9px'} mx={0}>
+        <Box pos={'absolute'} right={'-7px'} mx={0}>
           <RingProgress
             rootColor={getColor(allergy.severity).root}
             transitionDuration={250}

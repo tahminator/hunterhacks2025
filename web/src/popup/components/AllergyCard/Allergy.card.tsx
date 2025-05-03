@@ -1,13 +1,5 @@
 import { Allergy, Severity } from '@base/types'
-import {
-  Box,
-  Divider,
-  Group,
-  Paper,
-  ScrollArea,
-  Stack,
-  Text,
-} from '@mantine/core'
+import { Divider, Group, Paper, ScrollArea, Stack, Text } from '@mantine/core'
 
 interface AllergyCardProps {
   profileName: string

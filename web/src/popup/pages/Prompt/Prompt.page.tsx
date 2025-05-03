@@ -1,7 +1,20 @@
-import { Box, Group, Image, Stack, Text, Title } from '@mantine/core'
+import {
+  Box,
+  Group,
+  Image,
+  ScrollArea,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Switch } from '@mantine/core'
+
+import { Allergy, Severity } from '@base/types'
+
+import AllergyCard from '@components/AllergyCard'
+import AllergyItem from '@components/AllergyItem'
 
 import WaveLgURL from './wave.lg.svg'
 import WaveMdURL from './wave.md.svg'
@@ -9,6 +22,16 @@ import WaveSmURL from './wave.sm.svg'
 
 export function PromptPage() {
   const [isOnlyUser, setIsOnlyUsers] = useState(true)
+  const activeUserAllergies: Allergy[] = [
+    { name: 'Gluten', severity: Severity.low },
+    { name: 'Gluten', severity: Severity.med },
+    { name: 'Gluten', severity: Severity.low },
+    { name: 'Gluten', severity: Severity.high },
+    { name: 'Gluten', severity: Severity.low },
+    { name: 'Gluten', severity: Severity.low },
+    { name: 'Gluten', severity: Severity.low },
+  ]
+
   return (
     <Stack>
       <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
@@ -19,7 +42,7 @@ export function PromptPage() {
           <Image src={WaveLgURL} />
         </Stack>
       </Box>
-      <Stack pl={'lg'} py={'sm'} gap={'5px'}>
+      <Stack pl={'lg'} py={'sm'} gap={'5px'} w={'100%'}>
         <Title>Profiles</Title>
         <Group>
           <Title order={2}>Checking Just for You?</Title>
@@ -38,6 +61,20 @@ export function PromptPage() {
             Let's make everyone can eat, too.
           </Text>
         </Group>
+        <Box w={'90%'}>
+          <Box hidden={!isOnlyUser}>
+            <ScrollArea w={'100%'} h={'235px'} scrollbars={'y'} type={'auto'}>
+              <Stack h={'100%'} w={'95%'} gap={'0'}>
+                {activeUserAllergies.map((allergy: Allergy) => {
+                  return <AllergyItem key={allergy.name} allergy={allergy} />
+                })}
+              </Stack>
+            </ScrollArea>
+          </Box>
+          <Box hidden={isOnlyUser}>
+            <AllergyCard profileName="awd" allergyList={activeUserAllergies} />
+          </Box>
+        </Box>
       </Stack>
     </Stack>
   )
