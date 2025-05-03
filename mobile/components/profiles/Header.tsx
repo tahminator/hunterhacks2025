@@ -37,7 +37,7 @@ export default function Header({ username = 'User' }: Props) {
 
 const styles = StyleSheet.create({
   background: {
-    paddingTop: 50,
+    paddingTop: 70,
     paddingBottom: 40,
     alignItems: 'center',
     overflow: 'hidden',
@@ -55,9 +55,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 50,
+    shadowColor: '#000',
   },
   menuIconText: {
-    fontSize: 40,
+    fontSize: 20,
     color: '#000',
   },
   greeting: {

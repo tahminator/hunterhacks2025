@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import ProfileAdd from './ProfileAdd';
 
 type Allergy = { name: string; severity: string; color?: string };
@@ -16,6 +18,12 @@ type Props = {
   allergies: Allergy[];
   onSave?: (name: string, allergies: Allergy[]) => void;
   onDelete?: () => void;
+};
+
+const severityGradients: Record<string, [string, string]> = {
+  Severe: ['#E66D57', '#4B0505'],
+  Medium: ['#f5a623', '#d97706'],
+  Slight: ['#a8e063', '#56ab2f'],
 };
 
 export default function ProfileCard({
@@ -59,11 +67,23 @@ export default function ProfileCard({
     <View style={styles.card}>
       <View style={styles.leftSection}>
         <Text style={styles.name}>{name}</Text>
-        {allergies?.map((a, i) => (
-          <Text key={i} style={[styles.allergyText, { color: a.color }]}>
-            • {a.name} <Text style={styles.level}>({a.severity})</Text>
-          </Text>
-        ))}
+        {allergies?.map((a, i) => {
+          const gradient = severityGradients[a.severity] || ['#888', '#666'];
+          return (
+            <View key={i} style={styles.allergyRow}>
+              <Text style={[styles.allergyText, { color: a.color }]}>• {a.name} </Text>
+              <MaskedView maskElement={<Text style={styles.level}>({a.severity})</Text>}>
+                <LinearGradient
+                  colors={gradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={[styles.level, { opacity: 0 }]}>({a.severity})</Text>
+                </LinearGradient>
+              </MaskedView>
+            </View>
+          );
+        })}
       </View>
 
       <ImageBackground
@@ -131,12 +151,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 4,
   },
+  allergyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
   allergyText: {
     fontWeight: 'bold',
-    marginBottom: 2,
   },
   level: {
     fontWeight: 'normal',
-    color: '#333',
+    fontSize: 14,
+    marginLeft: 4,
   },
 });

@@ -13,7 +13,9 @@ import {
   Keyboard,
   Image,
 } from 'react-native';
-import AddAllergyModal from '../profiles/AlleryModal';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import AddAllergyModal from '../profiles/AllergyModal';
 
 type Allergy = { name: string; severity: string; color?: string };
 
@@ -39,9 +41,21 @@ export default function ProfileAdd({
   onDelete,
 }: Props) {
   const [username, setUsername] = useState('');
-  const [profileName, setProfileName] = useState(initialProfileName);
+  const [profileName, setProfileName] = useState(initialProfileName || '');
   const [allergies, setAllergies] = useState<Allergy[]>(initialAllergies);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const severityImages: Record<string, any> = {
+    Severe: require('../../assets/images/Circle.png'),
+    Medium: require('../../assets/images/Circle1.png'),
+    Slight: require('../../assets/images/Circle2.png'),
+  };
+
+  const severityGradients: Record<string, readonly [string, string]> = {
+    Severe: ['#E66D57', '#4B0505'],
+    Medium: ['#f5a623', '#d97706'],
+    Slight: ['#a8e063', '#56ab2f'],
+  };
 
   const removeAllergy = (index: number) => {
     setAllergies((prev) => prev.filter((_, i) => i !== index));
@@ -78,10 +92,9 @@ export default function ProfileAdd({
                 {initialProfileName ? 'Edit Profile' : 'Profile'}
               </Text>
 
-              {}
               {!initialProfileName && (
                 <>
-                  <Text style={styles.label}>Search by Username (optional):</Text>
+                  <Text style={styles.label}>Search by Username:</Text>
                   <TextInput
                     style={styles.input}
                     placeholder="Enter username"
@@ -100,22 +113,33 @@ export default function ProfileAdd({
               />
 
               <Text style={styles.label}>Allergies:</Text>
-              {allergies.map((a, i) => (
-                <View key={i} style={styles.allergyItem}>
-                  <TouchableOpacity onPress={() => removeAllergy(i)}>
-                    <Text style={styles.remove}>x</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.allergyName}>{a.name}</Text>
-                  <Text style={[styles.severity, { color: a.color || 'black' }]}>
-                    {a.severity}
-                  </Text>
-                  <Image
-                    source={require('../../assets/images/Circle.png')}
-                    style={styles.arcImage}
-                    resizeMode="contain"
-                  />
-                </View>
-              ))}
+              {allergies.map((a, i) => {
+                const severityKey = a.severity.trim();
+                const gradient = severityGradients[severityKey] || ['#ccc', '#999'];
+                const image = severityImages[severityKey] || require('../../assets/images/Circle.png');
+
+                return (
+                  <View key={i} style={styles.allergyItem}>
+                    <TouchableOpacity onPress={() => removeAllergy(i)}>
+                      <Text style={styles.remove}>x</Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.allergyName}>{a.name}</Text>
+
+                    <MaskedView maskElement={<Text style={styles.severity}>{a.severity}</Text>}>
+                      <LinearGradient
+                        colors={gradient}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                      >
+                        <Text style={[styles.severity, { opacity: 0 }]}>{a.severity}</Text>
+                      </LinearGradient>
+                    </MaskedView>
+
+                    <Image source={image} style={styles.arcImage} resizeMode="contain" />
+                  </View>
+                );
+              })}
 
               <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
                 <Text style={styles.addButtonText}>+ Allergy</Text>
@@ -180,17 +204,20 @@ const styles = StyleSheet.create({
   allergyItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
-    marginTop: 10,
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginTop: 8,
+    borderRadius: 20,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    elevation: 2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   remove: { marginRight: 10, fontSize: 16 },
   allergyName: { fontWeight: 'bold', color: '#6a762c', flex: 1 },
-  severity: { color: 'darkred', marginRight: 10 },
+  severity: { fontWeight: 'bold', marginRight: 10, fontSize: 14 },
   arcImage: {
     width: 24,
     height: 24,
