@@ -1,9 +1,7 @@
 import {
   createTheme,
-  CSSVariablesResolver,
   rem,
   MantineColorsTuple,
-  Title,
 } from '@mantine/core'
 
 /**
@@ -90,12 +88,12 @@ export const AppTheme = createTheme({
 
     sizes: {
       h1: {
-        fontSize: rem(64),
-        lineHeight: rem(60),
+        fontSize: rem(32),
+        lineHeight: rem(36),
       },
       h2: {
-        fontSize: rem(32),
-        lineHeight: rem(30),
+        fontSize: rem(15),
+        lineHeight: rem(13),
       },
     },
   },
