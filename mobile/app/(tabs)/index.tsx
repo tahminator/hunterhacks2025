@@ -2,37 +2,38 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import LoginModal from '../../components/LoginModal'; // Adjust this path based on your file structure
-import TypingEffect from '../../components/TypingEffect'; // Import the new component (adjust path as needed)
+import LoginModal from '../../components/LoginModal';
+import TypingEffect from '../../components/TypingEffect';
 
 export default function HomeScreen() {
-  // State for controlling the login modal visibility and mode
+  // state for controlling the login modal visibility and mode
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState('login');
-  
-  // Image URL for text background
+
+  // image URL (pasta) for text background
   const imageUrl = "https://media.discordapp.net/attachments/1365530505860087808/1368248570783862896/landing-bg.jpg?ex=68178848&is=681636c8&hm=2f2730a0a9d2bb25a237aef612f85e9889485a76895699ae55a0bd58cfe0872e&=&width=1448&height=1050";
-  
-  // Logo image URL
+
+  // logo (Aller free) image URL
   const logoUrl = "https://media.discordapp.net/attachments/1365530505860087808/1368248587959537866/Logo.png?ex=6817884c&is=681636cc&hm=fd23ddbda5ddf30b345db0391a369eb58cd9e436a25ad6af19c1a81f1ff06141&=&width=544&height=520";
-  
-  // Phrases for the typing effect
+
+  // phrases for the typing effect
   const allergicPhrases = [
     "I'm allergic to",
     "My brother is allergic to",
     "My mother is allergic to",
     "My father is allergic to",
-    "My friend is allergic to"
+    "My friend is allergic to",
+    "My coworker is allergic to"
   ];
 
-  // Function to create text with image background
+  // function to create text with image background
   const renderTextWithImageBackground = (text, textStyle) => {
     // Determine if this is the title text ("I'm allergic to")
     const isTitle = textStyle === styles.allergicText;
-    
-    // Adjust container width based on text length and font size
+
+    // adjusting container width based on text length and font size
     const containerWidth = textStyle.fontSize * text.length * (isTitle ? 0.4 : 0.65);
-    
+
     return (
       <View style={{ alignSelf: 'flex-end' }}>
         <MaskedView
@@ -52,10 +53,10 @@ export default function HomeScreen() {
             <ImageBackground
               source={{ uri: imageUrl }}
               style={{
-                width: textStyle.fontSize * text.length * 4, // Wider than needed
-                height: textStyle.fontSize * 4, // Taller than needed for zoom effect
-                right: -270, // Move image to the right
-                top: 40,  // Move image up (negative value moves up)
+                width: textStyle.fontSize * text.length * 4, // wider than needed
+                height: textStyle.fontSize * 4, // taller than needed for zoom effect
+                right: -270, // x-axis
+                top: 40,  // y-axis
               }}
             >
               <Text style={[textStyle, { opacity: 0 }]}>
@@ -71,20 +72,20 @@ export default function HomeScreen() {
   return (
     <LinearGradient
       colors={['rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(158, 179, 64, 1)', 'rgba(246, 216, 92, 1)', 'rgba(246, 216, 92, 1)']}
-      locations={[0.0, 0.1, 0.2, 0.3, 0.6, 0.8, 1.0]} // Example locations
-      start={{ x: 0, y: 0.3 }}
+      locations={[0.0, 0.1, 0.2, 0.3, 0.6, 0.8, 1.0]}
+      start={{ x: 0, y: 0.4 }}
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
-        {/* Profile icon in top right */}
+        {/* using to add a tad space above allergic text*/}
         <View style={styles.header}>
         </View>
-        
-        {/* Allergen text content */}
+
+        {/* allergen text content */}
         <View style={styles.allergenContent}>
-          {/* Replace static text with typing effect component */}
-          <TypingEffect 
+          {/* replacing static text with typing effect component */}
+          <TypingEffect
             phrasesToType={allergicPhrases}
             textStyle={styles.allergicText}
             imageUrl={imageUrl}
@@ -92,13 +93,13 @@ export default function HomeScreen() {
             pauseTime={1000}
             backspaceSpeed={30}
           />
-          
-          {/* Allergens with image backgrounds */}
+
+          {/* allergens with image backgrounds */}
           {renderTextWithImageBackground("Gluten", styles.allergenItem)}
           {renderTextWithImageBackground("Peanuts", styles.allergenItem)}
           {renderTextWithImageBackground("Pistachios", styles.allergenItem)}
-          
-          {/* Logo image replacing the "Aller free" circle */}
+
+          {/* logo image replacing the "Aller free" circle */}
           <View style={styles.logoContainer}>
             <Image
               source={{ uri: logoUrl }}
@@ -106,47 +107,47 @@ export default function HomeScreen() {
               resizeMode="contain"
             />
           </View>
-          
+
           {renderTextWithImageBackground("Corn", styles.allergenItem)}
           {renderTextWithImageBackground("Soy", styles.allergenItem)}
           {renderTextWithImageBackground("Shellfish", styles.allergenItem)}
-          
-          {/* Apply both image background and faded effect to "Avocados" */}
+
+          {/* applying both image background and faded effect to "Avocados" */}
           <View style={{ opacity: 0.6 }}>
             {renderTextWithImageBackground("Avocados", styles.allergenItem)}
           </View>
         </View>
-        
-        {/* Buttons at bottom */}
+
+        {/* buttons at the bottom */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.loginButton}
             onPress={() => {
               setModalMode('login');
               setLoginModalVisible(true);
-            }} // Open login modal in login mode
+            }} // opening login modal in login mode
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.signupButton}
             onPress={() => {
               setModalMode('register');
               setLoginModalVisible(true);
-            }} // Open login modal in register mode
+            }} // opening login modal in register mode
           >
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity>
-            <Text style={styles.guestText}>Continue as Guest</Text>
+            <Text style={[styles.guestText, { textDecorationLine: 'none' }]}>Continue as Guest</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-      
-      {/* Login Modal Component */}
-      <LoginModal 
+
+      {/* login Modal Component */}
+      <LoginModal
         visible={loginModalVisible}
         initialMode={modalMode}
         onClose={() => setLoginModalVisible(false)}
@@ -179,25 +180,24 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '500',
     color: '#e5a268',
-    textAlign: 'right',
+    textAlign: 'right'
   },
   allergenItem: {
     fontSize: 67,
     fontWeight: 'bold',
-    color: '#e5a268', // This color won't be visible with image background
     textAlign: 'right',
     lineHeight: 76,
-    marginVertical: 6, // Added to ensure proper spacing between items
+    marginVertical: 0, // added to ensure proper spacing between items
     paddingRight: 15
   },
   logoContainer: {
     position: 'absolute',
     alignSelf: 'center',
-    left: 21,
-    top: '35.1%',
+    left: 18,
+    top: '33.6%',
     zIndex: 10,
     width: 300,
-    height: 240,
+    height: 243,
   },
   logoImage: {
     width: '100%',
@@ -235,6 +235,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontStyle: 'italic',
-    textDecorationLine: 'underline',
   },
 });

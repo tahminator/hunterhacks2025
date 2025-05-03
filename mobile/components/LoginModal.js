@@ -11,9 +11,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
-  ScrollView
+  ScrollView,
+  Image
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 const { height } = Dimensions.get('window');
@@ -177,11 +177,13 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
                   { transform: [{ translateY: slideAnim }] }
                 ]}
               >
-                <LinearGradient
-                  colors={['#c4d157', '#a6af4b', '#828e3f']}
-                  style={styles.headerGradient}
-                >
-                  <View style={styles.headerContainer}>
+                <View style={styles.headerContainer}>
+                  <Image 
+                    source={{ uri: "https://media.discordapp.net/attachments/1365530505860087808/1368286169582014554/Group_40.png?ex=6817ab4c&is=681659cc&hm=57185bdd0ed140137b9d57869d4453fd7616d430ea3d162a1c4062040b54e0cc&=&width=920&height=538" }}
+                    style={styles.headerImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.headerOverlay}>
                     <Text style={styles.title}>
                       {isLogin ? "Login" : "Register"}
                     </Text>
@@ -189,7 +191,7 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
                       <Text style={styles.closeButtonText}>X</Text>
                     </TouchableOpacity>
                   </View>
-                </LinearGradient>
+                </View>
 
                 <View style={styles.whiteFormContainer}>
                   {isLogin ? renderLoginForm() : renderRegisterForm()}
@@ -219,27 +221,38 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#fff',
     maxHeight: '100%', // Limit the modal height to prevent it from going off-screen
-
   },
-  headerGradient: {
+  headerContainer: {
+    position: 'relative',
+    height: 210,
+  },
+  headerImage: {
+    width: '100%',
+    height: '100%',
+  },
+  headerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 20,
     paddingBottom: 10,
   },
   whiteFormContainer: {
     backgroundColor: '#fff',
     padding: 20,
+    paddingTop: 0,
     paddingBottom: 20,
   },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
   title: {
-    fontSize: 32,
+    fontSize: 33,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+    marginBottom: 120
   },
   closeButton: {
     width: 36,
@@ -248,6 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 120
   },
   closeButtonText: {
     fontSize: 20,
@@ -255,7 +269,8 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   formContainer: {
-    marginBottom: 20,
+    marginBottom: 45,
+    marginTop: -45
   },
   inputContainer: {
     flexDirection: 'row',
@@ -283,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   authButton: {
-    backgroundColor: '#414a15',
+    backgroundColor: '#7C7F1B',
     borderRadius: 30,
     paddingVertical: 14,
     alignItems: 'center',
