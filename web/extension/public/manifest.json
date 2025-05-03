@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "hunterhacks-allergens",
+  "version": "1.0.0",
+  "permissions": [
+    "scripting"
+  ],
+  "action": {
+    "default_title": "Hunter Hacks 2025",
+    "default_popup" : "index.html"
+  }
+}
