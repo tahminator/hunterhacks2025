@@ -8,10 +8,11 @@
     "baseUrl": ".",
     "paths": {
       "@base/*": ["./src/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@components/*": ["./src/components/*"],
+      "@popup/*": ["./src/popup/*"],
+      "@pages/*": ["./src/popup/pages/*"],
+      "@components/*": ["./src/popup/components/*"],
       "@assets/*": ["./src/assets/*"]
     },
-    "types": ["node"]
+    "types": ["node", "chrome"]
   }
 }
