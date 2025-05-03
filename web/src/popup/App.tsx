@@ -12,7 +12,7 @@ function App() {
   return (
     <MantineProvider theme={AppTheme}>
       <Box w={appWidth} h={appHeight} bd={'solid 1px black'} pos={'absolute'}>
-        <AllergyItem name="Gluten" severity={Severity.low} />
+        <AllergyItem name="Gluten" severity={Severity.high} />
         <MemoryRouter>
           <Routes>
             {/* <Route path="/" element={<LandingPage />} /> */}
