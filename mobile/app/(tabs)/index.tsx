@@ -3,14 +3,24 @@ import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LoginModal from '../../components/LoginModal'; // Adjust this path based on your file structure
+import TypingEffect from '../../components/TypingEffect'; // Import the new component (adjust path as needed)
 
 export default function HomeScreen() {
   // State for controlling the login modal visibility and mode
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState('login');
-
+  
   // Image URL for text background
   const imageUrl = "https://images.pexels.com/photos/4039710/pexels-photo-4039710.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+  
+  // Phrases for the typing effect
+  const allergicPhrases = [
+    "I'm allergic to",
+    "My brother is allergic to",
+    "My mother is allergic to",
+    "My father is allergic to",
+    "My friend is allergic to"
+  ];
 
   // Function to create text with image background
   const renderTextWithImageBackground = (text, textStyle) => {
@@ -69,8 +79,15 @@ export default function HomeScreen() {
         
         {/* Allergen text content */}
         <View style={styles.allergenContent}>
-          {/* Apply image background to "I'm allergic to" text */}
-          {renderTextWithImageBackground("I'm allergic to", styles.allergicText)}
+          {/* Replace static text with typing effect component */}
+          <TypingEffect 
+            phrasesToType={allergicPhrases}
+            textStyle={styles.allergicText}
+            imageUrl={imageUrl}
+            typingSpeed={60}
+            pauseTime={1000}
+            backspaceSpeed={30}
+          />
           
           {/* Allergens with image backgrounds */}
           {renderTextWithImageBackground("Gluten", styles.allergenItem)}
@@ -160,7 +177,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'center',
     position: 'relative',
-    paddingTop: 30,
   },
   allergicText: {
     fontSize: 28,
@@ -175,6 +191,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     lineHeight: 76,
     marginVertical: 4, // Added to ensure proper spacing between items
+    paddingRight: 15
   },
   allerFreeOuterContainer: {
     position: 'absolute',
