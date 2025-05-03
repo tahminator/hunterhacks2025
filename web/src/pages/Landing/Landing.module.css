@@ -1,0 +1,26 @@
+#landing-container {
+  background-color: var(--mantine-color-olivine-9);
+}
+
+#landing-gradient {
+  background: #3f4a06;
+  background: -webkit-linear-gradient(
+    180deg,
+    rgba(63, 74, 6, 0) 23%,
+    rgba(158, 179, 64, 0.54) 52%,
+    rgba(246, 216, 92, 1) 75%
+  );
+  background: -moz-linear-gradient(
+    180deg,
+    rgba(63, 74, 6, 0) 23%,
+    rgba(158, 179, 64, 0.54) 52%,
+    rgba(246, 216, 92, 1) 75%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(63, 74, 6, 0) 23%,
+    rgba(158, 179, 64, 0.54) 52%,
+    rgba(246, 216, 92, 1) 75%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3F4A06", endColorstr="#F6D85C", GradientType=0);
+}

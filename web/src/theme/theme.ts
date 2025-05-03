@@ -103,5 +103,5 @@ export const AppTheme = createTheme({
   },
 })
 
-export const appHeight = '550px'
+export const appHeight = '600px'
 export const appWidth = '350px'

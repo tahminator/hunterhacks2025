@@ -1,5 +1,6 @@
+import styles from './Landing.module.css'
 import LogoURL from '@assets/Logo.png'
-import { Title, Stack, Text, Group, Box, Image } from '@mantine/core'
+import { Title, Stack, Text, Group, Box, Image, Button } from '@mantine/core'
 interface TextCutoutBackgroundProps {
   textArray: string[]
 }
@@ -7,7 +8,7 @@ interface TextCutoutBackgroundProps {
 function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
   return (
     <Box
-      style={{ zIndex: -1 }}
+      style={{ zIndex: 0 }}
       py={'10px'}
       px={'20px'}
       pos={'absolute'}
@@ -32,6 +33,19 @@ function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
   )
 }
 
+function GradientOverlay() {
+  return (
+    <Box
+      pos={'absolute'}
+      bottom={'0'}
+      w={'100%'}
+      h={'350px'}
+      style={{ zIndex: '2' }}
+      id={styles.landingGradient}
+    ></Box>
+  )
+}
+
 function LandingPage() {
   const allergens = [
     'Gluten',
@@ -42,17 +56,32 @@ function LandingPage() {
     'Shellfish',
     'Avocados',
   ]
+
   return (
-    <Box h={'100%'}>
+    <Box h={'100%'} id={styles.landingContainer}>
       <TextCutoutBackground textArray={allergens} />
+      <Box pos={'absolute'} top={'170px'} mx={'50'} w={'60%'}>
+        <Image src={LogoURL} style={{ zIndex: 99 }} />
+      </Box>
+      <GradientOverlay />
       <Stack
-        mx={'50'}
+        px="10"
         w={'100%'}
-        h={'95%'}
-        justify="center"
+        pos={'absolute'}
+        bottom={'30px'}
         style={{ zIndex: 99 }}
       >
-        <Image w={'60%'} src={LogoURL} />
+        <Group>
+          <Button flex={2} color="olivine.9">
+            Login
+          </Button>
+          <Button flex={1} color="olivine.8">
+            Register
+          </Button>
+        </Group>
+        <Button variant="outline" color={'rgba(0, 0, 0, 1)'}>
+          Continue As Guest
+        </Button>
       </Stack>
     </Box>
   )
