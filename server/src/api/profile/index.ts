@@ -44,9 +44,25 @@ profileRouter.get("/all", async (req, res) => {
     return;
   }
 
+  const searchQuery = req.query["query"] as string;
+
   const profile = await db.profile.findMany({
     where: {
       userId: res.locals.user.id,
+      OR: [
+        {
+          firstName: {
+            contains: searchQuery,
+            mode: "insensitive",
+          },
+        },
+        {
+          lastName: {
+            contains: searchQuery,
+            mode: "insensitive",
+          },
+        },
+      ],
     },
     include: {
       allergies: true,
