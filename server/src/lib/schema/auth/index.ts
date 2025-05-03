@@ -5,7 +5,7 @@ export const signupSchema = z.object({
   email: z.string().trim().email(),
   password: z
     .string()
-    .min(1)
+    .min(8)
     .max(16)
     .refine((password) => /[a-z]/.test(password), {
       message: "Your password requires one lowercase letter.",
