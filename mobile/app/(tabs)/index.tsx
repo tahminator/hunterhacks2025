@@ -5,8 +5,9 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import LoginModal from '../../components/LoginModal'; // Adjust this path based on your file structure
 
 export default function HomeScreen() {
-  // State for controlling the login modal visibility
+  // State for controlling the login modal visibility and mode
   const [loginModalVisible, setLoginModalVisible] = useState(false);
+  const [modalMode, setModalMode] = useState('login');
 
   // Image URL for text background
   const imageUrl = "https://images.pexels.com/photos/4039710/pexels-photo-4039710.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
@@ -106,12 +107,21 @@ export default function HomeScreen() {
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
             style={styles.loginButton}
-            onPress={() => setLoginModalVisible(true)} // Open login modal on press
+            onPress={() => {
+              setModalMode('login');
+              setLoginModalVisible(true);
+            }} // Open login modal in login mode
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.signupButton}>
+          <TouchableOpacity 
+            style={styles.signupButton}
+            onPress={() => {
+              setModalMode('register');
+              setLoginModalVisible(true);
+            }} // Open login modal in register mode
+          >
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
           
@@ -124,6 +134,7 @@ export default function HomeScreen() {
       {/* Login Modal Component */}
       <LoginModal 
         visible={loginModalVisible}
+        initialMode={modalMode}
         onClose={() => setLoginModalVisible(false)}
       />
     </LinearGradient>
