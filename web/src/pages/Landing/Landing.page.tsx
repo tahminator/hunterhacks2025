@@ -1,6 +1,30 @@
 import styles from './Landing.module.css'
 import LogoURL from '@assets/Logo.png'
 import { Title, Stack, Text, Group, Box, Image, Button } from '@mantine/core'
+
+import { TypeAnimation } from 'react-type-animation'
+
+const TypingText = () => {
+  return (
+    <TypeAnimation
+      sequence={[
+        "I'm allergic to...",
+        2500,
+        'My coworker',
+        500,
+        "My coworker can't eat...",
+        2500,
+        'My girlfriend is allergic to...',
+        3000,
+      ]}
+      wrapper="span"
+      speed={1}
+      style={{ display: 'inline-block' }}
+      repeat={Infinity}
+      preRenderFirstString={true}
+    />
+  )
+}
 interface TextCutoutBackgroundProps {
   textArray: string[]
 }
@@ -16,7 +40,7 @@ function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
     >
       <Group w={'100%'} justify="flex-end" mb="xs">
         <Text size="lg" c={'rgba(216, 111, 59, 1.0)'}>
-          I'm allergic to
+          <TypingText />
         </Text>
       </Group>
       <Stack align="flex-end" mt={'-1rem'} gap={'1.5rem'}>
