@@ -7,8 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@base': path.resolve(__dirname, 'src/'),
-      '@pages': path.resolve(__dirname, 'src/pages/'),
-      '@components': path.resolve(__dirname, 'src/components/'),
+      '@popup': path.resolve(__dirname, 'src/popup/'),
+      '@pages': path.resolve(__dirname, 'src/popup/pages/'),
+      '@components': path.resolve(__dirname, 'src/popup/components/'),
       '@assets': path.resolve(__dirname, 'src/assets/'),
     },
   },
@@ -18,4 +19,25 @@ export default defineConfig({
     },
   },
   plugins: [react()],
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    rollupOptions: {
+      input: {
+        popup: path.resolve(__dirname, 'src/popup/main.tsx'),
+        popupIndex: path.resolve(__dirname, 'index.html'),
+        snipping: path.resolve(__dirname, 'src/snipping/main.tsx'),
+        // snippingIndex: path.resolve(__dirname, 'src/popup/index.html'),
+      },
+      output: {
+        entryFileNames: (chunkInfo) => {
+          switch (chunkInfo.name) {
+            case 'snipping':
+              return '[name].js' 
+            default:
+              return 'assets/[name]-[hash].js'
+          }
+        }
+      }
+    }
+  }
 })
