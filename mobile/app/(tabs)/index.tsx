@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import LoginModal from '../../components/LoginModal'; // Adjust this path based on your file structure
 
 export default function HomeScreen() {
+  // State for controlling the login modal visibility
+  const [loginModalVisible, setLoginModalVisible] = useState(false);
+
   // Image URL for text background
   const imageUrl = "https://images.pexels.com/photos/4039710/pexels-photo-4039710.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 
@@ -100,7 +104,10 @@ export default function HomeScreen() {
         
         {/* Buttons at bottom */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity 
+            style={styles.loginButton}
+            onPress={() => setLoginModalVisible(true)} // Open login modal on press
+          >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
           
@@ -113,6 +120,12 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      
+      {/* Login Modal Component */}
+      <LoginModal 
+        visible={loginModalVisible}
+        onClose={() => setLoginModalVisible(false)}
+      />
     </LinearGradient>
   );
 }
@@ -145,7 +158,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   allergenItem: {
-    fontSize: 66,
+    fontSize: 60,
     fontWeight: 'bold',
     color: '#e5a268', // This color won't be visible with image background
     textAlign: 'right',
@@ -167,8 +180,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(130, 142, 63, 0.4)', // Light green with opacity
     left: -15,
     top: -15,
-    marginLeft: 20,
-    marginTop: 20
   },
   allerFreeCircle: {
     width: 180,
@@ -178,8 +189,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden', // To ensure the grain stays within the circle
-    marginLeft: 20,
-    marginTop: 20
   },
   allerText: {
     color: '#ffffff',
