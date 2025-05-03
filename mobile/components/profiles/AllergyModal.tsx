@@ -73,7 +73,7 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
   return (
     <Modal visible={visible} transparent animationType="none">
       <TouchableWithoutFeedback onPress={onClose}>
-        <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}> 
           <TouchableWithoutFeedback>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -86,30 +86,37 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
                   { transform: [{ translateY: slideAnim }, { scale: scaleAnim }] },
                 ]}
               >
-                <LinearGradient colors={['#9BC53D', '#FDFDFD']} style={styles.header}>
+                <LinearGradient
+                  colors={['#6a9e1f', '#cde672']}
+                  start={{ x: 0.5, y: 0 }}
+                  end={{ x: 0.5, y: 1 }}
+                  style={styles.headerExpanded}
+                >
                   <Image
                     source={require('../../assets/images/Vector.png')}
                     style={styles.arcImage}
                     resizeMode="contain"
                   />
-                  <View style={styles.headerContent}>
+                  <View style={styles.headerContentExpanded}>
                     <Text style={styles.title}>Add Allergy</Text>
                     <TouchableOpacity onPress={onClose}>
                       <Text style={styles.closeText}>X</Text>
                     </TouchableOpacity>
                   </View>
+
+                  <View style={styles.formOverlay}>
+                    <Text style={styles.label}>Allergic to</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="e.g. Strawberries"
+                      value={allergy}
+                      onChangeText={setAllergy}
+                      placeholderTextColor="#666"
+                    />
+                  </View>
                 </LinearGradient>
 
-                <View style={styles.form}>
-                  <Text style={styles.label}>Allergic to</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="e.g. Strawberries"
-                    value={allergy}
-                    onChangeText={setAllergy}
-                    placeholderTextColor="#666"
-                  />
-
+                <View style={styles.formBelow}>
                   <View style={styles.severityRow}>
                     {['slight', 'medium', 'severe'].map(level => (
                       <TouchableOpacity
@@ -159,11 +166,19 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingBottom: 20,
   },
-  header: {
-    padding: 20,
-    paddingBottom: 10,
+  headerExpanded: {
+    paddingTop: 40,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
     position: 'relative',
     overflow: 'hidden',
+  },
+  headerContentExpanded: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    zIndex: 1,
+    marginBottom: 20,
   },
   arcImage: {
     position: 'absolute',
@@ -173,28 +188,27 @@ const styles = StyleSheet.create({
     width: '50%',
     zIndex: 0,
   },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 1,
-  },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '900',
     color: '#fff',
+    paddingTop: 10,
   },
   closeText: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
   },
-  form: {
+  formOverlay: {
+    zIndex: 2,
+  },
+  formBelow: {
     padding: 20,
   },
   label: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#fff',
   },
   input: {
     backgroundColor: '#f1f1f1',

@@ -7,7 +7,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-export default function Header() {
+type Props = {
+  username?: string;
+};
+
+export default function Header({ username = 'User' }: Props) {
   return (
     <ImageBackground
       source={require('../../assets/images/user.png')}
@@ -16,12 +20,12 @@ export default function Header() {
     >
       <View style={styles.overlay}>
         <View style={styles.menuButton}>
-          <TouchableOpacity style={styles.menuIcon} onPress={() => { /* menu action */ }}>
+          <TouchableOpacity style={styles.menuIcon} onPress={() => {}}>
             <Text style={styles.menuIconText}>☰</Text>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.greeting}>Hi, User!</Text>
+        <Text style={styles.greeting}>Hi, {username}!</Text>
 
         <View style={styles.profileIcon}>
           <Text style={styles.profileIconText}>👤</Text>
@@ -33,7 +37,7 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   background: {
-    paddingTop: 50,
+    paddingTop: 70,
     paddingBottom: 40,
     alignItems: 'center',
     overflow: 'hidden',
@@ -51,9 +55,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 50,
+    shadowColor: '#000',
   },
   menuIconText: {
-    fontSize: 40,
+    fontSize: 20,
     color: '#000',
   },
   greeting: {
