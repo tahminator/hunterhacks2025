@@ -74,6 +74,24 @@ authRouter.post("/signup", async (req, res) => {
     },
   });
 
+  const profile = await db.profile.create({
+    data: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profileUrl: user.profileUrl,
+      User: {
+        connect: { username },
+      },
+    },
+  });
+
+  await db.user.update({
+    where: { id: user.id },
+    data: {
+      activeProfileId: profile.id,
+    },
+  });
+
   const sessionToken = generateSessionToken();
   const session = await createSession(sessionToken, user.id);
   setSessionTokenCookie(res, session.id, session.expiresAt);

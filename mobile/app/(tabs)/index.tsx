@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, SafeAreaView, ImageBackground, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LoginModal from '../../components/LoginModal'; // Adjust this path based on your file structure
+import TypingEffect from '../../components/TypingEffect'; // Import the new component (adjust path as needed)
 
 export default function HomeScreen() {
   // State for controlling the login modal visibility and mode
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState('login');
-
+  
   // Image URL for text background
-  const imageUrl = "https://images.pexels.com/photos/4039710/pexels-photo-4039710.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+  const imageUrl = "https://media.discordapp.net/attachments/1365530505860087808/1368248570783862896/landing-bg.jpg?ex=68178848&is=681636c8&hm=2f2730a0a9d2bb25a237aef612f85e9889485a76895699ae55a0bd58cfe0872e&=&width=1448&height=1050";
+  
+  // Logo image URL
+  const logoUrl = "https://media.discordapp.net/attachments/1365530505860087808/1368248587959537866/Logo.png?ex=6817884c&is=681636cc&hm=fd23ddbda5ddf30b345db0391a369eb58cd9e436a25ad6af19c1a81f1ff06141&=&width=544&height=520";
+  
+  // Phrases for the typing effect
+  const allergicPhrases = [
+    "I'm allergic to",
+    "My brother is allergic to",
+    "My mother is allergic to",
+    "My father is allergic to",
+    "My friend is allergic to"
+  ];
 
   // Function to create text with image background
   const renderTextWithImageBackground = (text, textStyle) => {
@@ -39,7 +52,7 @@ export default function HomeScreen() {
             <ImageBackground
               source={{ uri: imageUrl }}
               style={{
-                width: textStyle.fontSize * text.length * 30, // Wider than needed
+                width: textStyle.fontSize * text.length * 4, // Wider than needed
                 height: textStyle.fontSize * 4, // Taller than needed for zoom effect
                 right: -270, // Move image to the right
                 top: 40,  // Move image up (negative value moves up)
@@ -57,8 +70,9 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient
-      colors={['#414a15','#414a15','#414a15','#f1da71']} // Dark Olive Green to Light Sea Green
-      start={{ x: 0, y: 0 }}
+      colors={['rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(24, 41, 2, 1)', 'rgba(158, 179, 64, 1)', 'rgba(246, 216, 92, 1)', 'rgba(246, 216, 92, 1)']}
+      locations={[0.0, 0.1, 0.2, 0.3, 0.6, 0.8, 1.0]} // Example locations
+      start={{ x: 0, y: 0.3 }}
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
@@ -69,28 +83,28 @@ export default function HomeScreen() {
         
         {/* Allergen text content */}
         <View style={styles.allergenContent}>
-          {/* Apply image background to "I'm allergic to" text */}
-          {renderTextWithImageBackground("I'm allergic to", styles.allergicText)}
+          {/* Replace static text with typing effect component */}
+          <TypingEffect 
+            phrasesToType={allergicPhrases}
+            textStyle={styles.allergicText}
+            imageUrl={imageUrl}
+            typingSpeed={60}
+            pauseTime={1000}
+            backspaceSpeed={30}
+          />
           
           {/* Allergens with image backgrounds */}
           {renderTextWithImageBackground("Gluten", styles.allergenItem)}
           {renderTextWithImageBackground("Peanuts", styles.allergenItem)}
           {renderTextWithImageBackground("Pistachios", styles.allergenItem)}
           
-          {/* Background circle for the "Aller free" overlay */}
-          <View style={styles.allerFreeOuterContainer}>
-            <View style={styles.allerFreeBackCircle}></View>
-            <ImageBackground
-              source={{ uri: "https://i.imgur.com/hCzWKIl.png" }} // Using the same texture image as text for consistency
-              style={styles.allerFreeCircle}
-              imageStyle={{ 
-                borderRadius: 90, // Same as the container to make the image rounded
-                opacity: 0.9, // Slightly transparent to ensure text readability
-              }}
-            >
-              <Text style={styles.allerText}>Aller</Text>
-              <Text style={styles.freeText}>free</Text>
-            </ImageBackground>
+          {/* Logo image replacing the "Aller free" circle */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: logoUrl }}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
           
           {renderTextWithImageBackground("Corn", styles.allergenItem)}
@@ -160,7 +174,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'center',
     position: 'relative',
-    paddingTop: 30,
   },
   allergicText: {
     fontSize: 28,
@@ -169,53 +182,26 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   allergenItem: {
-    fontSize: 60,
+    fontSize: 67,
     fontWeight: 'bold',
     color: '#e5a268', // This color won't be visible with image background
     textAlign: 'right',
     lineHeight: 76,
-    marginVertical: 4, // Added to ensure proper spacing between items
+    marginVertical: 6, // Added to ensure proper spacing between items
+    paddingRight: 15
   },
-  allerFreeOuterContainer: {
+  logoContainer: {
     position: 'absolute',
     alignSelf: 'center',
-    left: 10,
-    top: '45%',
+    left: 21,
+    top: '35.1%',
     zIndex: 10,
+    width: 300,
+    height: 240,
   },
-  allerFreeBackCircle: {
-    position: 'absolute',
-    width: 210,
-    height: 210,
-    borderRadius: 105,
-    backgroundColor: 'rgba(130, 142, 63, 0.4)', // Light green with opacity
-    left: -15,
-    top: -15,
-  },
-  allerFreeCircle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#5e601a', // Updated color as requested
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden', // To ensure the grain stays within the circle
-  },
-  allerText: {
-    color: '#ffffff',
-    fontSize: 42,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    marginBottom: -10,
-    // In a real app, you would use: fontFamily: 'Playfair', 
-    // Playfair Display Italic looks similar to the font in the image
-  },
-  freeText: {
-    color: '#ffffff',
-    fontSize: 42,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    // In a real app, you would use: fontFamily: 'Playfair',
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
   buttonContainer: {
     width: '100%',

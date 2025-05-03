@@ -19,6 +19,40 @@ model User {
   password   String
 
   sessions Session[]
+  profiles Profile[]
+
+  activeProfile   Profile? @relation("ActiveProfile", fields: [activeProfileId], references: [id])
+  activeProfileId String?  @unique
+}
+
+model Profile {
+  id     String @unique @default(uuid())
+  userId String
+
+  firstName  String
+  lastName   String
+  profileUrl String
+
+  allergies Allergy[]
+
+  User          User  @relation(references: [id], fields: [userId], onDelete: Cascade)
+  activeForUser User? @relation("ActiveProfile")
+}
+
+model Allergy {
+  id        String @unique @default(uuid())
+  profileId String
+
+  itemName String
+  severity AllergySeverity
+
+  Profile Profile @relation(references: [id], fields: [profileId], onDelete: Cascade)
+}
+
+enum AllergySeverity {
+  low
+  med
+  high
 }
 
 model Session {

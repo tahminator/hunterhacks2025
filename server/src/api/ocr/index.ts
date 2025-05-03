@@ -21,7 +21,8 @@ ocrRouter.post("/", multer.single("image"), async (req, res) => {
     return;
   }
 
-  const extension = req.file.filename.split(".")[1];
+  const extension = req.file.originalname.split(".")[1];
+
   if (!supportedImageTypes.includes(extension)) {
     res.status(400).json({
       message: "File doesn't have a valid extension.",
