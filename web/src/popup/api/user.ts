@@ -2,12 +2,34 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 // import { AllergenProfile, Allergy } from '@base/types'
 import { HOSTNAME } from './config'
+import { Severity } from '@base/types'
 
 export const useProfilesQuery = () => {
   return useQuery({
     queryKey: ['profile', 'all'],
     queryFn: async () => {
-      await axios.get(`${HOSTNAME}/api/profile/all`)
+      const res = await axios.get(`${HOSTNAME}/api/profile/all`)
+      const data = (await res.data) as {
+        message: string
+        data: {
+          firstName: string
+          lastName: string
+          allergies: {
+            itemName: string
+            severity: string
+          }[]
+        }[]
+      }
+      return data
+    },
+    select: (data) => {
+      return {
+        ...data,
+        data: data.data.map((profile) => ({
+          ...profile,
+          name: `${profile.firstName} ${profile.lastName}`,
+        })),
+      }
     },
   })
 }

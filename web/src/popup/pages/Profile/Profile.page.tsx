@@ -44,6 +44,16 @@ function ProfileData({ profile }: ProfileDataProps) {
         }
     }
   }
+  const displayLevel = (level: Severity) => {
+    switch (level) {
+      case Severity.low:
+        return 'Slight'
+      case Severity.med:
+        return 'Medium'
+      case Severity.high:
+        return 'Severe'
+    }
+  }
   return (
     <Paper
       className={styles.profileContainer}
@@ -66,7 +76,7 @@ function ProfileData({ profile }: ProfileDataProps) {
                   {allergy.name}
                 </Text>{' '}
                 <Text size="xs" display={'inline'} fs={'italic'}>
-                  ({allergy.severity})
+                  ({displayLevel(allergy.severity)})
                 </Text>
               </ListItem>
             )
@@ -232,9 +242,8 @@ export default function ProfilePage() {
                   <Carousel.Slide key={index}>
                     <ProfileData profile={profile} />
                     <Button
-                      variant="transparent"
                       c={'black'}
-                      color="gray"
+                      color="gray.4"
                       fullWidth
                       mt={'md'}
                       // onClick={() => openProfiles()}

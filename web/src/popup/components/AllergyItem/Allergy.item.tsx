@@ -39,7 +39,16 @@ export function AllergyItem({ allergy, hideable = false }: AllergyItemProps) {
     }
   }
 
-  //   const getColor = (level: Severity) => {}
+  const displayLevel = (level: Severity) => {
+    switch (level) {
+      case Severity.low:
+        return 'Slight'
+      case Severity.med:
+        return 'Medium'
+      case Severity.high:
+        return 'Severe'
+    }
+  }
 
   return (
     <Paper my={'xs'} withBorder radius={'xl'} shadow={'md'}>
@@ -51,8 +60,8 @@ export function AllergyItem({ allergy, hideable = false }: AllergyItemProps) {
       >
         <ActionIcon display={!hideable ? 'none' : 'block'} />
         <Text flex={1}>{allergy.name}</Text>
-        <Text size="sm" fw={'600'} pr={38}>
-          {allergy.severity}
+        <Text tt="capitalize" size="sm" fw={'600'} pr={38}>
+          {displayLevel(allergy.severity)}
         </Text>
         <Box pos={'absolute'} right={'-7px'} mx={0}>
           <RingProgress

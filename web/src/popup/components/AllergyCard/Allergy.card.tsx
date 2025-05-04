@@ -32,6 +32,17 @@ export function AllergyCard({
     }
   }
 
+  const displayLevel = (level: Severity) => {
+    switch (level) {
+      case Severity.low:
+        return 'Slight'
+      case Severity.med:
+        return 'Medium'
+      case Severity.high:
+        return 'Severe'
+    }
+  }
+
   return (
     <Paper
       withBorder
@@ -64,7 +75,9 @@ export function AllergyCard({
                   <Text flex={1} size="sm" fw={'500'}>
                     {allergy.name}
                   </Text>
-                  <Text size="xs">({allergy.severity.substring(0, 3)}.)</Text>
+                  <Text tt="capitalize" size="xs">
+                    ({displayLevel(allergy.severity).substring(0, 3)})
+                  </Text>
                 </Group>
               </Paper>
             )

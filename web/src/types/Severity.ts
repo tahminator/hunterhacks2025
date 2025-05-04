@@ -1,7 +1,7 @@
 enum Severity {
-  low = 'Slight',
-  med = 'Medium',
-  high = 'Severe',
+  low = 'low',
+  med = 'med',
+  high = 'high',
 }
 
 export { Severity }
