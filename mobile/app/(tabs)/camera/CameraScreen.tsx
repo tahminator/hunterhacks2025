@@ -19,11 +19,22 @@ import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
 import PhotoModal from "../../../components/PhotoModal";
 import { useGenerateReportMutation } from "@/apis/queries/report";
-import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.43;
 const CARD_SPACING = 10;
+
+type Data = {
+  message: string;
+  data: {
+    name: string;
+    foods: {
+      title: string;
+      description: string;
+      severity: "low" | "med" | "high";
+    }[];
+  }[];
+};
 
 const TextWithImageBackground = ({ text, imageUrl, textStyle }) => {
   return (
@@ -131,6 +142,7 @@ export default function CameraScreen() {
   const [base64, setBase64] = useState<string>();
   const [restaurantText, setRestaurantText] = useState<string>();
   const { mutate } = useGenerateReportMutation();
+  const [data, setData] = useState<Data>();
 
   const onSubmit = async () => {
     if (!uri) {
@@ -152,9 +164,12 @@ export default function CameraScreen() {
     formData.append("restaurantName", restaurantText as string);
     formData.append("isJustMe", Boolean(!isProfileToggleOn).toString());
 
-    console.log("ok about to mutate");
-
-    mutate(formData);
+    mutate(formData, {
+      onSuccess: (data) => {
+        setData(data);
+        setCurrentScreen("results");
+      },
+    });
   };
 
   // Sample profiles data
@@ -206,7 +221,7 @@ export default function CameraScreen() {
   const handleBackButton = () => {
     if (!isModalOpen) return;
 
-    if (currentScreen === "allergenResults") {
+    if (currentScreen === "results") {
       navigateToScreen("profileSelection");
     } else if (currentScreen === "profileSelection") {
       navigateToScreen("main");
@@ -570,6 +585,14 @@ export default function CameraScreen() {
           handleBackButton={handleBackButton}
           renderMainScreen={renderMainScreen}
           renderProfileSelectionScreen={renderProfileSelectionScreen}
+          isModalOpen={isModalOpen}
+          cameraTransition={cameraTransition}
+          profiles={
+            isProfileToggleOn
+              ? [{ name: "You", selected: true }]
+              : profiles.filter((p) => p.selected)
+          }
+          data={data}
         />
       )}
     </View>
