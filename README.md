@@ -1,5 +1,5 @@
 # Aller-Free (HunterHack2025 Submission)
-Group Members: Tahmid Ahmed, Angela Yu, Alexon Abreu Rameriz, Daniel Sooknanan
+Group Members: Tahmid Ahmed, Angela Yu, Alexon Abreu Ramirez, Daniel Sooknanan
 
 ## What is Aller-Free?
 If you've organized a hackathon (or any large-scale event), I'm sure you know *fully* well how tedious catering for 
