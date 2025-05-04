@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (status === "success") {
-      if (data.data.user && data.data.session) {
+      if (data?.data?.user && data?.data?.session) {
         router.push("/profile/ProfileScreen");
       }
     }

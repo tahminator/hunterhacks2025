@@ -54,10 +54,6 @@ const LoginModal = ({ visible, onClose, initialMode = "login" }) => {
     });
   };
 
-  const onClick = async () => {
-    const res = await fetch("");
-  };
-
   const renderLoginForm = () => (
     <View style={styles.formContainer}>
       <View style={styles.inputContainer}>
