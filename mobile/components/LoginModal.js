@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -12,20 +12,20 @@ import {
   Platform,
   TouchableWithoutFeedback,
   ScrollView,
-  Image
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
-const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
+const LoginModal = ({ visible, onClose, initialMode = "login" }) => {
   const [slideAnim] = useState(new Animated.Value(height));
-  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+  const [isLogin, setIsLogin] = useState(initialMode === "login");
 
   useEffect(() => {
     if (visible) {
       // Set the form mode based on initialMode prop each time the modal opens
-      setIsLogin(initialMode === 'login');
+      setIsLogin(initialMode === "login");
 
       // Animate the modal sliding up from the bottom
       Animated.timing(slideAnim, {
@@ -53,10 +53,19 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
     });
   };
 
+  const onClick = async () => {
+    const res = await fetch("");
+  };
+
   const renderLoginForm = () => (
     <View style={styles.formContainer}>
       <View style={styles.inputContainer}>
-        <Ionicons name="person-outline" size={24} color="#333" style={styles.inputIcon} />
+        <Ionicons
+          name="person-outline"
+          size={24}
+          color="#333"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           placeholder="Username or Email"
@@ -65,7 +74,12 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
+        <Ionicons
+          name="lock-closed-outline"
+          size={24}
+          color="#333"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -83,7 +97,9 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => setIsLogin(false)}>
-        <Text style={styles.switchModeText}>Don't have an account? Sign up</Text>
+        <Text style={styles.switchModeText}>
+          Don't have an account? Sign up
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,7 +108,12 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
     <View style={styles.formContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
-          <Ionicons name="person-outline" size={24} color="#333" style={styles.inputIcon} />
+          <Ionicons
+            name="person-outline"
+            size={24}
+            color="#333"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -117,7 +138,12 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
+          <Ionicons
+            name="lock-closed-outline"
+            size={24}
+            color="#333"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -127,7 +153,12 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={24} color="#333" style={styles.inputIcon} />
+          <Ionicons
+            name="lock-closed-outline"
+            size={24}
+            color="#333"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Re-enter Password"
@@ -137,7 +168,12 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={24} color="#333" style={styles.inputIcon} />
+          <Ionicons
+            name="mail-outline"
+            size={24}
+            color="#333"
+            style={styles.inputIcon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -151,18 +187,16 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setIsLogin(true)}>
-          <Text style={styles.switchModeText}>Already have an account? Login</Text>
+          <Text style={styles.switchModeText}>
+            Already have an account? Login
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-    >
+    <Modal visible={visible} transparent animationType="none">
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback>
@@ -174,12 +208,14 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
               <Animated.View
                 style={[
                   styles.modalContainer,
-                  { transform: [{ translateY: slideAnim }] }
+                  { transform: [{ translateY: slideAnim }] },
                 ]}
               >
                 <View style={styles.headerContainer}>
-                  <Image 
-                    source={{ uri: "https://media.discordapp.net/attachments/1365530505860087808/1368286169582014554/Group_40.png?ex=6817ab4c&is=681659cc&hm=57185bdd0ed140137b9d57869d4453fd7616d430ea3d162a1c4062040b54e0cc&=&width=920&height=538" }}
+                  <Image
+                    source={{
+                      uri: "https://media.discordapp.net/attachments/1365530505860087808/1368286169582014554/Group_40.png?ex=6817ab4c&is=681659cc&hm=57185bdd0ed140137b9d57869d4453fd7616d430ea3d162a1c4062040b54e0cc&=&width=920&height=538",
+                    }}
                     style={styles.headerImage}
                     resizeMode="cover"
                   />
@@ -187,7 +223,10 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
                     <Text style={styles.title}>
                       {isLogin ? "Login" : "Register"}
                     </Text>
-                    <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                    <TouchableOpacity
+                      onPress={handleClose}
+                      style={styles.closeButton}
+                    >
                       <Text style={styles.closeButtonText}>X</Text>
                     </TouchableOpacity>
                   </View>
@@ -208,75 +247,75 @@ const LoginModal = ({ visible, onClose, initialMode = 'login' }) => {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   keyboardAvoidingView: {
-    width: '100%',
+    width: "100%",
   },
   modalContainer: {
-    width: '100%',
+    width: "100%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-    maxHeight: '100%', // Limit the modal height to prevent it from going off-screen
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    maxHeight: "100%", // Limit the modal height to prevent it from going off-screen
   },
   headerContainer: {
-    position: 'relative',
+    position: "relative",
     height: 210,
   },
   headerImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   headerOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     paddingBottom: 10,
   },
   whiteFormContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     paddingTop: 0,
     paddingBottom: 20,
   },
   title: {
     fontSize: 33,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 120
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 120,
   },
   closeButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 120
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 120,
   },
   closeButtonText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   formContainer: {
     marginBottom: 45,
-    marginTop: -45
+    marginTop: -45,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+    borderBottomColor: "rgba(0, 0, 0, 0.2)",
     marginBottom: 20,
     paddingBottom: 5,
   },
@@ -286,32 +325,32 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     padding: 5,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: '#414a15',
+    color: "#414a15",
     fontSize: 14,
   },
   authButton: {
-    backgroundColor: '#7C7F1B',
+    backgroundColor: "#7C7F1B",
     borderRadius: 30,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   authButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   switchModeText: {
-    textAlign: 'center',
-    color: '#414a15',
+    textAlign: "center",
+    color: "#414a15",
     fontSize: 16,
     marginTop: 10,
   },

@@ -17,7 +17,7 @@ app.use(morgan("tiny"));
 
 app.use("/api", apiRouter);
 
-const server = app.listen(3000);
+const server = app.listen(3000, "0.0.0.0");
 
 try {
   const serverMetadata = server.address() as { address: string; port: number };
