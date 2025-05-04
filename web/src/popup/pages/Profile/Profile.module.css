@@ -1,0 +1,5 @@
+#profile-header {
+  background-size: cover;
+  background: url('@assets/profile-header.png');
+  background-repeat: no-repeat;
+}

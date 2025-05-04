@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -12,12 +12,22 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import LoginModal from "../../components/LoginModal";
 import TypingEffect from "../../components/TypingEffect";
-import { apiFetch } from "@/lib/apiFetch";
+import { useAuthQuery, useGuestLoginMutation } from "@/apis/queries/auth";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   // state for controlling the login modal visibility and mode
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState("login");
+  const router = useRouter();
+
+  const { status, data } = useAuthQuery();
+
+  const { mutate: guestLoginMutate } = useGuestLoginMutation();
+
+  const onGuestPress = () => {
+    guestLoginMutate();
+  };
 
   // image URL (pasta) for text background
   const imageUrl =
@@ -36,6 +46,14 @@ export default function HomeScreen() {
     "My friend is allergic to",
     "My coworker is allergic to",
   ];
+
+  useEffect(() => {
+    if (status === "success") {
+      if (data?.data?.user && data?.data?.session) {
+        router.push("/profile/ProfileScreen");
+      }
+    }
+  }, [status, data, router]);
 
   // function to create text with image background
   const renderTextWithImageBackground = (text, textStyle) => {
@@ -153,7 +171,7 @@ export default function HomeScreen() {
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onGuestPress}>
             <Text style={[styles.guestText, { textDecorationLine: "none" }]}>
               Continue as Guest
             </Text>

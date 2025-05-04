@@ -15,6 +15,7 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useGuestLoginMutation } from "@/apis/queries/auth";
 
 const { height } = Dimensions.get("window");
 
@@ -51,10 +52,6 @@ const LoginModal = ({ visible, onClose, initialMode = "login" }) => {
     }).start(() => {
       onClose();
     });
-  };
-
-  const onClick = async () => {
-    const res = await fetch("");
   };
 
   const renderLoginForm = () => (

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import {
   ScrollView,
   View,
@@ -7,30 +7,49 @@ import {
   StyleSheet,
   NativeSyntheticEvent,
   NativeScrollEvent,
-} from 'react-native';
+} from "react-native";
 
-import Header from '../../../components/profiles/Header';
-import AllergyDashboard from '../../../components/profiles/AllergyDashboard';
-import ProfileCard from '../../../components/profiles/ProfileCard';
-import AddAllergyModal from '../../../components/profiles/AllergyModal';
-import AddOtherAllergenProfileModal from '../../../components/profiles/ProfileAdd';
-import { useAuthQuery } from '../../../apis/queries/auth';
+import Header from "../../../components/profiles/Header";
+import AllergyDashboard from "../../../components/profiles/AllergyDashboard";
+import ProfileCard from "../../../components/profiles/ProfileCard";
+import AddAllergyModal from "../../../components/profiles/AllergyModal";
+import AddOtherAllergenProfileModal from "../../../components/profiles/ProfileAdd";
+import { useLogoutMutation } from "@/apis/queries/auth";
+import { useRouter } from "expo-router";
+import { z } from "zod";
+import { severitySchema } from "@/apis/schema/allergies";
+import { useAuthQuery } from "@/apis/queries/auth";
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const { data: envelope, status } = useAuthQuery();
+
   const [scrollY, setScrollY] = useState(0);
   const [showAddAllergyModal, setShowAddAllergyModal] = useState(false);
   const [showOtherProfileModal, setShowOtherProfileModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const router = useRouter();
 
   const [mainAllergies, setMainAllergies] = useState<
-    { name: string; severity: string; color?: string }[]
+    {
+      itemName: string;
+      severity: z.infer<typeof severitySchema>;
+      color?: string;
+    }[]
   >([]);
 
   const [profiles, setProfiles] = useState<
-    { name: string; allergies: { name: string; severity: string; color?: string }[] }[]
+    {
+      name: string;
+      allergies: {
+        itemName: string;
+        severity: z.infer<typeof severitySchema>;
+        color?: string;
+      }[];
+    }[]
   >([]);
+
+  const { mutate } = useLogoutMutation();
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -43,35 +62,16 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleAddOrEditProfile = (profile: {
-    username: string;
-    profileName: string;
-    allergies: { name: string; severity: string; color?: string }[];
-  }) => {
-    if (editingIndex !== null) {
-      setProfiles(prev => {
-        const updated = [...prev];
-        updated[editingIndex] = { name: profile.profileName, allergies: profile.allergies };
-        return updated;
-      });
-    } else {
-      setProfiles(prev => [...prev, { name: profile.profileName, allergies: profile.allergies }]);
-    }
-    setShowOtherProfileModal(false);
-    setEditingIndex(null);
-  };
-
   const handleRemoveProfile = (index: number) => {
-    setProfiles(prev => prev.filter((_, i) => i !== index));
-  }
-
-  // Loading state
+    setProfiles((prev) => prev.filter((_, i) => i !== index));
+  };
   if (status !== "success" || !envelope) {
     return <Text>Loading…</Text>;
   }
+  const name = envelope?.data?.user?.activeProfile?.firstName || 'Guest' || envelope?.data?.user?.username;
+  
 
-  // Safely access user profile data with optional chaining and defaults
-  const userName = envelope?.data?.user?.activeProfile?.firstName || 'User';
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -81,17 +81,31 @@ export default function ProfileScreen() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <Header />
+        <Header
+          username={name}
+          onLogout={() => {
+
+            mutate(void 0, {
+              onSuccess: () => {
+                router.push("/");
+              },
+            });
+          }}
+        />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>My Allergies</Text>
           {mainAllergies.map((a, i) => (
             <AllergyDashboard
               key={i}
-              name={userName}
-              severity={['Severe', 'Medium', 'Slight'].includes(a.severity) ? a.severity as 'Severe' | 'Medium' | 'Slight' : 'Slight'}
+              name={a.itemName}
+              severity={
+                ["Severe", "Medium", "Slight"].includes(a.severity)
+                  ? (a.severity as "Severe" | "Medium" | "Slight")
+                  : "Slight"
+              }
               onRemove={() =>
-                setMainAllergies(prev => prev.filter((_, idx) => idx !== i))
+                setMainAllergies((prev) => prev.filter((_, idx) => idx !== i))
               }
             />
           ))}
@@ -118,9 +132,9 @@ export default function ProfileScreen() {
             <ProfileCard
               key={index}
               name={profile.name}
-              allergies={profile.allergies.map(allergy => ({
+              allergies={profile.allergies.map((allergy) => ({
                 ...allergy,
-                color: allergy.color ?? 'defaultColor',
+                color: allergy.color ?? "defaultColor",
               }))}
               onEdit={() => {
                 setEditingIndex(index);
@@ -146,7 +160,7 @@ export default function ProfileScreen() {
         visible={showAddAllergyModal}
         onClose={() => setShowAddAllergyModal(false)}
         onSubmit={(newAllergy) => {
-          setMainAllergies(prev => [...prev, newAllergy]);
+          setMainAllergies((prev) => [...prev, newAllergy]);
           setShowAddAllergyModal(false);
         }}
       />
@@ -157,9 +171,9 @@ export default function ProfileScreen() {
           setShowOtherProfileModal(false);
           setEditingIndex(null);
         }}
-        onSubmit={handleAddOrEditProfile}
-        initialProfileName={editingIndex !== null ? profiles[editingIndex].name : ''}
-        initialAllergies={editingIndex !== null ? profiles[editingIndex].allergies : []}
+        initialAllergies={
+          editingIndex !== null ? profiles[editingIndex].allergies : []
+        }
         onDelete={
           editingIndex !== null
             ? () => {
@@ -178,16 +192,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 100,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
   },
   section: {
     padding: 16,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    backgroundColor: '#000000',
+    fontWeight: "bold",
+    color: "#ffffff",
+    backgroundColor: "#000000",
     padding: 8,
     marginBottom: 8,
     borderRadius: 4,
@@ -195,44 +209,44 @@ const styles = StyleSheet.create({
   addAllergyButton: {
     marginTop: 10,
     paddingVertical: 12,
-    backgroundColor: '#94b000',
+    backgroundColor: "#94b000",
     borderRadius: 8,
   },
   addAllergyText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: 'bold',
+    textAlign: "center",
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   otherProfilesHeader: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     paddingHorizontal: 10,
     paddingVertical: 6,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     borderRadius: 4,
   },
   otherProfilesTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontWeight: "bold",
+    color: "#ffffff",
   },
   divider: {
     height: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     marginTop: 6,
     marginBottom: 12,
   },
   subText: {
     fontSize: 14,
     marginBottom: 8,
-    color: '#444',
-    textAlign: 'center',
+    color: "#444",
+    textAlign: "center",
   },
   addProfileButton: {
     padding: 10,
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     borderRadius: 6,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 12,
   },
 });

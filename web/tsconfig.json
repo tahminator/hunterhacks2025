@@ -11,6 +11,7 @@
       "@popup/*": ["./src/popup/*"],
       "@pages/*": ["./src/popup/pages/*"],
       "@components/*": ["./src/popup/components/*"],
+      "@api/*": ["./src/popup/api/*"],
       "@assets/*": ["./src/assets/*"]
     },
     "types": ["node", "chrome"]
