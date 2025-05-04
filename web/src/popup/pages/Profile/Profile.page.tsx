@@ -232,14 +232,14 @@ export default function ProfilePage() {
                   <Carousel.Slide key={index}>
                     <ProfileData profile={profile} />
                     <Button
-                      variant="outline"
+                      variant="transparent"
                       c={'black'}
                       color="gray"
                       fullWidth
                       mt={'md'}
                       // onClick={() => openProfiles()}
                     >
-                      Add Profile
+                      +
                     </Button>
                   </Carousel.Slide>
                 )

@@ -35,7 +35,7 @@ export const useLogoutMutation = () => {
 export const useAuthQuery = () => {
   return useQuery({
     queryKey: ['auth', '@me'],
-    retry: 0,
+    retry: false,
     queryFn: async () => {
       const res = await axios.get(`${HOSTNAME}/api/auth/@me`)
 
