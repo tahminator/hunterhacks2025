@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Box,
   Button,
   Divider,
@@ -14,7 +15,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Switch } from '@mantine/core'
 
-import { Allergy, Severity } from '@base/types'
+import { Allergy, Severity, AllergenProfile } from '@base/types'
 
 import AllergyCard from '@components/AllergyCard'
 import AllergyItem from '@components/AllergyItem'
@@ -23,22 +24,51 @@ import WaveLgURL from './wave.lg.svg'
 import WaveMdURL from './wave.md.svg'
 import WaveSmURL from './wave.sm.svg'
 import { appHeight } from '@base/theme/theme'
+import { Carousel } from '@mantine/carousel'
 
 export function PromptPage() {
   const [resText, setResText] = useState('')
   const [isOnlyUser, setIsOnlyUsers] = useState(true)
-  const activeUserAllergies: Allergy[] = [
-    { name: 'Gluten', severity: Severity.low },
-    { name: 'Gluten', severity: Severity.med },
-    { name: 'Gluten', severity: Severity.low },
-    { name: 'Gluten', severity: Severity.high },
-    { name: 'Gluten', severity: Severity.low },
-    { name: 'Gluten', severity: Severity.low },
-    { name: 'Gluten', severity: Severity.low },
+  const sampleAllergenProfiles: AllergenProfile[] = [
+    {
+      profileName: 'John Doe',
+      allergies: [
+        { name: 'Peanuts', severity: Severity.high },
+        { name: 'Milk', severity: Severity.low },
+      ],
+    },
+    {
+      profileName: 'Jane Smith',
+      allergies: [
+        { name: 'Shellfish', severity: Severity.high },
+        { name: 'Eggs', severity: Severity.med },
+      ],
+    },
+    {
+      profileName: 'Alice Johnson',
+      allergies: [
+        { name: 'Wheat', severity: Severity.med },
+        { name: 'Soy', severity: Severity.low },
+      ],
+    },
+    {
+      profileName: 'Mark Lee',
+      allergies: [{ name: 'Tree Nuts', severity: Severity.high }],
+    },
+    {
+      profileName: 'Emily Chen',
+      allergies: [
+        { name: 'Fish', severity: Severity.med },
+        { name: 'Sesame', severity: Severity.low },
+      ],
+    },
   ]
 
+  const profiles: AllergenProfile[] = sampleAllergenProfiles
+  const ownerProfile: Allergy[] = [{ name: 'Gluten', severity: Severity.high }]
+
   return (
-    <ScrollArea h={appHeight}>
+    <ScrollArea h={appHeight} pb={'2px'}>
       <Stack>
         <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
           {/* <Image></Image> */}
@@ -83,23 +113,36 @@ export function PromptPage() {
               Let's make sure everyone can eat, too.
             </Text>
           </Group>
-          <Box w={'100%'}>
+          <Box w={'100%'} pos={'relative'}>
             <Box hidden={!isOnlyUser}>
               <Stack h={'100%'} w={'95%'} gap={'0'}>
-                {activeUserAllergies.map((allergy: Allergy) => {
-                  return <AllergyItem key={allergy.name} allergy={allergy} />
+                {ownerProfile.map((allergy: Allergy, index) => {
+                  return <AllergyItem key={index} allergy={allergy} />
                 })}
               </Stack>
             </Box>
-            <Box hidden={isOnlyUser}>
-              <AllergyCard
-                profileName="awd"
-                allergyList={activeUserAllergies}
-              />
+            <Box opacity={isOnlyUser ? 0 : 1} h={isOnlyUser ? 0 : 'auto'}>
+              <Carousel withIndicators slideSize="200px" slideGap="xs" loop>
+                {profiles.map((profile: AllergenProfile, index) => {
+                  return (
+                    <Carousel.Slide key={profile.profileName + `${index}`}>
+                      <AllergyCard
+                        profileName={profile.profileName}
+                        allergyList={profile.allergies}
+                      />
+                    </Carousel.Slide>
+                  )
+                })}
+              </Carousel>
             </Box>
           </Box>
+          <Group>
+            <Button flex={1} mt={'sm'} color={'olivine'} bottom={'0'} fullWidth>
+              Check Allergens
+            </Button>
+            {/* <ActionIcon /> */}
+          </Group>
         </Stack>
-        <Button fullWidth>Check Allergens</Button>
       </Stack>
     </ScrollArea>
   )

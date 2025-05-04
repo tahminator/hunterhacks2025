@@ -46,9 +46,10 @@ export function AllergyCard({
         <Text>{!isUser ? profileName : 'You'}</Text>
         <Divider w={'100%'} />
         <ScrollArea w={'100%'} h={'140px'}>
-          {allergyList.map((allergy: Allergy) => {
+          {allergyList.map((allergy: Allergy, index) => {
             return (
               <Paper
+                key={index}
                 my={'5px'}
                 w={'100%'}
                 py={'2px'}
