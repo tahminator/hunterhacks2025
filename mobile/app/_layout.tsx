@@ -22,18 +22,6 @@ export default function RootLayout() {
     return null;
   }
 
-  const onCopy = async (text: string) => {
-    try {
-      // For Expo:
-      await Clipboard.setStringAsync(text);
-      // OR for React Native CLI:
-      // await Clipboard.setString(text);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   return (
     <QueryProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
