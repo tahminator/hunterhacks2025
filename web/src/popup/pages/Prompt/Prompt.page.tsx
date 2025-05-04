@@ -11,9 +11,10 @@ import {
   TextInput,
   Title,
   Modal,
+  Checkbox,
 } from '@mantine/core'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useMemo, useState } from 'react'
+// import { useNavigate } from 'react-router-dom'
 import { Switch } from '@mantine/core'
 import { Allergy, Severity, AllergenProfile } from '@base/types'
 
@@ -27,11 +28,14 @@ import WaveMdURL from './wave.md.svg'
 import WaveSmURL from './wave.sm.svg'
 import { appHeight } from '@base/theme/theme'
 import { Carousel } from '@mantine/carousel'
+import { ImageContext } from '@base/popup/contexts/ImageContext'
 
 export function PromptPage() {
+  const { snapshotData } = useContext(ImageContext)
   const [resText, setResText] = useState('')
   const [opened, { open, close }] = useDisclosure(false)
   const [isOnlyUser, setIsOnlyUsers] = useState(true)
+
   const sampleAllergenProfiles: AllergenProfile[] = [
     {
       profileName: 'John Doe',
@@ -67,6 +71,16 @@ export function PromptPage() {
     },
   ]
 
+  const snapshotImage = useMemo(() => {
+    console.log('Snapshot', snapshotData)
+    if (!snapshotData) {
+      return <Image color="black"></Image>
+    }
+    return (
+      <Image w={'100%'} h={'100%'} src={snapshotData} alt="" fit="contain" />
+    )
+  }, [snapshotData])
+
   const profiles: AllergenProfile[] = sampleAllergenProfiles
   const ownerProfile: Allergy[] = [{ name: 'Gluten', severity: Severity.high }]
 
@@ -75,7 +89,9 @@ export function PromptPage() {
       <ScrollArea h={appHeight} pb={'2px'}>
         <Stack>
           <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
-            {/* <Image></Image> */}
+            <Box w={'100%'} h={'152px'}>
+              {snapshotImage}
+            </Box>
             <Stack
               aria-label="waves"
               gap={'xs'}
@@ -186,7 +202,20 @@ export function PromptPage() {
         onClose={close}
         title="Include Profiles"
       >
-        {/* Modal content */}
+        <Stack>
+          {profiles.map((profile, index) => {
+            return (
+              <Checkbox
+                key={index}
+                checked={true}
+                label={profile.profileName}
+              />
+            )
+          })}
+          <Button onClick={close} color="black">
+            Done
+          </Button>
+        </Stack>
       </Modal>
     </Box>
   )
@@ -194,16 +223,33 @@ export function PromptPage() {
 
 // Wrapper to setup automatic routing on message receipt
 export default function PromptWrapper() {
-  const navigate = useNavigate()
+  const { setSnapshotData } = useContext(ImageContext)
+  // const navigate = useNavigate()
   const handleMessage = (request: any) => {
-    console.log('react received message', request)
     if (request.target === 'check-image') {
-      navigate('/prompt')
+      console.log('react received message', request)
+      // navigate('/prompt')
+
+      const { dataUrl, x, y, w, h } = request.data
+      const image = new window.Image() as HTMLImageElement
+      image.src = dataUrl
+      image.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          throw new Error('Could not load image.')
+        }
+        ctx.drawImage(image, x, y, w, h, 0, 0, w, h)
+        const croppedUrl = canvas.toDataURL('image/png')
+        setSnapshotData(croppedUrl as string)
+      }
     }
   }
   useEffect(() => {
     // Do not remove, establishes message passing
-    chrome.runtime.sendMessage({ action: 'ping' }).then((res) => {
+    chrome.runtime.sendMessage({ action: 'TEST_USER' }).then((res) => {
       console.log(res)
     })
     chrome.runtime.onMessage.addListener(handleMessage)
@@ -212,5 +258,5 @@ export default function PromptWrapper() {
     }
   }, [])
 
-  return <></>
+  return <Box></Box>
 }

@@ -45,9 +45,8 @@ function TextCutoutBackground({ textArray }: TextCutoutBackgroundProps) {
       </Group>
       <Stack align="flex-end" mt={'-1rem'} gap={'1.5rem'}>
         {textArray.map((text, index) => (
-          <Box h={'2.5rem'}>
+          <Box key={index} h={'2.5rem'}>
             <Title
-              key={index}
               style={{
                 fontSize: '3.4rem',
               }}
