@@ -19,7 +19,6 @@ import { Image } from "expo-image";
 import MaskedView from '@react-native-masked-view/masked-view';
 import PhotoModal from '../../../components/PhotoModal';
 
-
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.43;
 const CARD_SPACING = 10;
@@ -163,9 +162,8 @@ export default function CameraScreen() {
   const handleBackButton = () => {
     if (!isModalOpen) return;
     
-    if (currentScreen === 'allergenResults') {
-      navigateToScreen('profileSelection');
-    } else if (currentScreen === 'profileSelection') {
+    // Always return to main screen regardless of current screen when back is pressed
+    if (currentScreen === 'allergenResults' || currentScreen === 'profileSelection') {
       navigateToScreen('main');
     } else if (uri) {
       closePhotoView();
@@ -250,8 +248,8 @@ export default function CameraScreen() {
   };
 
   const handleCheckAllergens = () => {
-    // For now, nothing happens when Check Allergens is clicked
-    console.log("Check Allergens clicked - no action for now, should go to the report screen");
+    // Navigate to the allergen results screen
+    navigateToScreen('allergenResults');
   };
 
   const handleAddProfile = () => {
@@ -260,8 +258,8 @@ export default function CameraScreen() {
   };
 
   const handleDone = () => {
-    // Go back to main screen when Done is clicked from profile selection
-    console.log("Check Allergens clicked - no action for now, should go to the report screen");
+    // Now navigate to allergen results screen when Done is clicked
+    navigateToScreen('allergenResults');
   };
 
   const handleSaveResults = () => {
@@ -496,17 +494,18 @@ export default function CameraScreen() {
 
       {/* Photo view with modal (conditionally rendered) */}
       {modalVisible && (
-        <PhotoModal
-          uri={uri}
-          currentScreen={currentScreen}
-          panResponder={panResponder}
-          slideAnimation={slideAnimation}
-          handleBackButton={handleBackButton}
-          renderMainScreen={renderMainScreen}
-          renderProfileSelectionScreen={renderProfileSelectionScreen}
-          isModalOpen={isModalOpen}
-          cameraTransition={cameraTransition}
-        />
+      <PhotoModal
+      uri={uri}
+      currentScreen={currentScreen}
+      panResponder={panResponder}
+      slideAnimation={slideAnimation}
+      handleBackButton={handleBackButton}
+      renderMainScreen={renderMainScreen}
+      renderProfileSelectionScreen={renderProfileSelectionScreen}
+      isModalOpen={isModalOpen}
+      cameraTransition={cameraTransition}
+      profiles={isProfileToggleOn ? [{ name: "You", selected: true }] : profiles.filter(p => p.selected)}
+    />
       )}
     </View>
   );

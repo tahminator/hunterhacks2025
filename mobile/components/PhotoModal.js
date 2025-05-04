@@ -1,83 +1,115 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  StyleSheet, 
-  TouchableOpacity, 
-  ScrollView, 
-  Animated 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Image,
 } from 'react-native';
+import AllergenResultsScreen from './AllergenResultsScreen';
 
-const CARD_WIDTH = 180;
-const CARD_SPACING = 10;
-
-const PhotoModal = ({ 
-  uri, 
-  currentScreen, 
-  panResponder, 
-  slideAnimation, 
-  handleBackButton, 
-  renderMainScreen, 
-  renderProfileSelectionScreen 
+const PhotoModal = ({
+  uri,
+  currentScreen,
+  panResponder,
+  slideAnimation,
+  handleBackButton,
+  renderMainScreen,
+  renderProfileSelectionScreen,
+  isModalOpen,
+  cameraTransition,
+  profiles, // Add this prop to receive profiles from parent component
 }) => {
+  const renderAllergenResultsScreen = () => {
+    // Pass the actual selected profiles
+    return (
+      <AllergenResultsScreen
+        selectedProfiles={profiles || []}
+        onSaveResults={handleBackButton}
+        isPersonalProfile={profiles?.length === 1 && profiles[0].name === "You"}
+      />
+    );
+  };
+
+  const renderScreenContent = () => {
+    switch(currentScreen) {
+      case 'main':
+        return renderMainScreen();
+      case 'profileSelection':
+        return renderProfileSelectionScreen();
+      case 'allergenResults':
+        return renderAllergenResultsScreen();
+      default:
+        return renderMainScreen();
+    }
+  };
+
   return (
     <Animated.View
       style={[
         styles.fullScreenContainer,
+        {
+          opacity: cameraTransition.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+          }),
+          zIndex: isModalOpen ? 2 : 0,
+          elevation: isModalOpen ? 2 : 0,
+        },
       ]}
+      pointerEvents={isModalOpen ? 'auto' : 'none'}
     >
-      {/* Top portion showing captured image - only show for main and profile selection screens */}
-      {currentScreen !== 'allergenResults' && (
-        <Image
-          source={{ uri: uri }}
-          style={styles.capturedImage}
-        />
-      )}
-      
-      {/* Swipe indicator - only show for main and profile selection screens */}
-      {currentScreen !== 'allergenResults' && (
-        <View style={styles.swipeIndicator}>
-          <View style={styles.swipeIndicatorBar} />
+      {/* Captured image */}
+      <Image source={{ uri }} style={styles.capturedImage} />
+
+      {/* Swipe indicator */}
+      <Animated.View
+        style={[
+          styles.swipeIndicator,
+          {
+            opacity: slideAnimation,
+            transform: [
+              {
+                translateY: slideAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [10, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+        {...panResponder.panHandlers}
+      >
+        <View style={styles.swipeIndicatorBar} />
+      </Animated.View>
+
+      {/* Back button */}
+      <TouchableOpacity style={styles.backButton} onPress={handleBackButton}>
+        <Text style={styles.backButtonText}>{"< Back"}</Text>
+      </TouchableOpacity>
+
+      {/* Modal content */}
+      <Animated.View
+        style={[
+          styles.modal,
+          {
+            transform: [
+              {
+                translateY: slideAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [400, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <View style={styles.wavyBorder} />
+        <View style={styles.modalContent}>
+          {renderScreenContent()}
         </View>
-      )}
-      
-      {/* Modal content without allergenResults branch */}
-      {currentScreen !== 'allergenResults' && (
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={[
-            styles.modal,
-            {
-              transform: [
-                {
-                  translateY: slideAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [600, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          {/* Wavy top border */}
-          <View style={styles.wavyBorder} />
-          <View style={styles.modalContent}>
-            {/* Render content based on current screen */}
-            {currentScreen === 'main' ? renderMainScreen() : renderProfileSelectionScreen()}
-          </View>
-        </Animated.View>
-      )}
-      
-      {/* Button to take another picture - positioned outside the modal */}
-      {currentScreen !== 'allergenResults' && (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleBackButton}
-        >
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-      )}
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -89,11 +121,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: '#000',
   },
   capturedImage: {
-    width: "100%",
-    height: "35%",
-    position: "absolute",
+    width: '100%',
+    height: '35%',
+    position: 'absolute',
     top: 0,
   },
   swipeIndicator: {
@@ -113,37 +146,38 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   modal: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: "80%",
-    backgroundColor: "white",
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+    height: '90%',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   wavyBorder: {
-    height: 60,
-    width: "100%",
-    overflow: "hidden",
-    position: "absolute",
-    top: -60,
-    backgroundColor: "#EAEA00"
+    height: 20,
+    width: '100%',
+    overflow: 'hidden',
+    position: 'absolute',
+    top: -20,
   },
   modalContent: {
     flex: 1,
   },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 50,
     left: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 20,
+    zIndex: 1000,
   },
   backButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
