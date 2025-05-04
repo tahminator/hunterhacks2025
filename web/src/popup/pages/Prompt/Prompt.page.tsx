@@ -92,54 +92,9 @@ export function PromptPage() {
   const profiles: AllergenProfile[] = sampleAllergenProfiles
   const ownerProfile: Allergy[] = [{ name: 'Gluten', severity: Severity.high }]
 
-  // if (report && !reportIsLoading) {
-  // }
-
-  const sample_report = {
-    message: 'Your report is complete!',
-    data: [
-      {
-        name: 'Tahmid Ahmed',
-        foods: [
-          {
-            title: 'Big Mac®',
-            description:
-              'The Big Mac contains a sesame seed bun, beef patties, Big Mac sauce, lettuce, cheese, pickles, and onions. The bun and Big Mac sauce contain gluten, which poses a severe risk due to your gluten allergy. Additionally, the cheese contains milk, which could trigger your milk chocolate allergy, albeit slightly.',
-            severity: 'high',
-          },
-          {
-            title: 'Quarter Pounder® with Cheese',
-            description:
-              'This burger includes a sesame seed bun, beef patty, cheese, pickles, onions, ketchup, and mustard. The bun contains gluten, making it unsafe for you. The cheese also contains milk, which could cause a mild reaction due to your milk chocolate allergy.',
-            severity: 'high',
-          },
-          {
-            title: 'Quarter Pounder® Bacon Deluxe',
-            description:
-              'The Quarter Pounder Bacon Deluxe features a sesame seed bun, beef patty, bacon, cheese, lettuce, tomato, pickles, onions, ketchup, and mustard. The bun contains gluten, posing a severe risk. The cheese contains milk, which could trigger a slight allergic reaction.',
-            severity: 'high',
-          },
-          {
-            title: 'Double Quarter Pounder®',
-            description:
-              'This item includes a sesame seed bun, two beef patties, cheese, pickles, onions, ketchup, and mustard. The bun contains gluten, which is highly unsafe for you. The cheese contains milk, which could cause a mild reaction due to your milk chocolate allergy.',
-            severity: 'high',
-          },
-          {
-            title: 'Cheeseburger',
-            description:
-              'The cheeseburger consists of a sesame seed bun, beef patty, cheese, pickles, onions, ketchup, and mustard. The bun contains gluten, posing a severe risk. The cheese contains milk, which could trigger a slight allergic reaction.',
-            severity: 'high',
-          },
-        ],
-      },
-    ],
+  if (report && !reportIsLoading) {
+    return <PromptResults message={report.message} data={report.data} />
   }
-
-  return (
-    <PromptResults message={sample_report.message} data={sample_report.data} />
-  )
-  // return <PromptResults message={report.message} data={report.data} />
   return (
     <Box style={{ overflow: 'hidden' }}>
       <LoadingOverlay visible={reportIsLoading} />
