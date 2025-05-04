@@ -157,7 +157,7 @@ export default function CameraScreen() {
   const scrollViewRef = useRef(null);
   const [base64, setBase64] = useState<string>();
   const [restaurantText, setRestaurantText] = useState<string>();
-  const { mutate } = useGenerateReportMutation();
+  const { mutate, status: mutateStatus } = useGenerateReportMutation();
   const [data, setData] = useState<Data>();
   const [profiles, setProfiles] = useState<
     {
@@ -501,8 +501,11 @@ export default function CameraScreen() {
             style={[
               styles.checkAllergensButton,
               !isProfileToggleOn && { marginRight: 8 },
+              mutateStatus === "pending" && { opacity: 0.3 }, // manually dim
             ]}
             onPress={onSubmit}
+            activeOpacity={1} // keep this 1 so the manual style takes effect
+            disabled={mutateStatus === "pending"}
           >
             <Text style={styles.checkAllergensText}>Check Allergens</Text>
           </TouchableOpacity>
