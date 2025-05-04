@@ -13,23 +13,35 @@ import {
   PanResponder,
   StatusBar,
   ScrollView,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { Image } from "expo-image";
-import MaskedView from '@react-native-masked-view/masked-view';
-import PhotoModal from '../../../components/PhotoModal';
+import MaskedView from "@react-native-masked-view/masked-view";
+import PhotoModal from "../../../components/PhotoModal";
+import { useGenerateReportMutation } from "@/apis/queries/report";
 
-
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.43;
 const CARD_SPACING = 10;
+
+type Data = {
+  message: string;
+  data: {
+    name: string;
+    foods: {
+      title: string;
+      description: string;
+      severity: "low" | "med" | "high";
+    }[];
+  }[];
+};
 
 const TextWithImageBackground = ({ text, imageUrl, textStyle }) => {
   return (
     <MaskedView
       style={{ height: 40, marginBottom: 10 }}
       maskElement={
-        <Text style={[textStyle, { backgroundColor: 'transparent' }]}>
+        <Text style={[textStyle, { backgroundColor: "transparent" }]}>
           {text}
         </Text>
       }
@@ -38,8 +50,8 @@ const TextWithImageBackground = ({ text, imageUrl, textStyle }) => {
         source={{ uri: imageUrl }}
         style={{
           flex: 1,
-          height: '100%',
-          width: '100%',
+          height: "100%",
+          width: "100%",
         }}
       />
     </MaskedView>
@@ -57,7 +69,11 @@ const ProfileCard = ({ name, allergies, isSelected, onSelect }) => {
       <Text style={styles.profileName}>{name}</Text>
       <View style={styles.profileDivider} />
       {allergies.map((allergy, index) => (
-        <View key={index} style={styles.allergyTag} backgroundColor={allergy.color}>
+        <View
+          key={index}
+          style={styles.allergyTag}
+          backgroundColor={allergy.color}
+        >
           <Text style={styles.allergyText}>{allergy.name}</Text>
           <Text style={styles.allergySeverity}>({allergy.severity})</Text>
         </View>
@@ -75,7 +91,7 @@ const PaginationDots = ({ total, active }) => {
           key={index}
           style={[
             styles.paginationDot,
-            index === active ? styles.activeDot : styles.inactiveDot
+            index === active ? styles.activeDot : styles.inactiveDot,
           ]}
         />
       ))}
@@ -87,14 +103,24 @@ const PaginationDots = ({ total, active }) => {
 const ProfileSelectionItem = ({ name, isSelected, onToggle }) => {
   return (
     <TouchableOpacity
-      style={[styles.profileSelectionItem, isSelected && styles.selectedProfileItem]}
+      style={[
+        styles.profileSelectionItem,
+        isSelected && styles.selectedProfileItem,
+      ]}
       onPress={onToggle}
     >
-      <View style={[styles.selectionIndicator, isSelected && styles.selectedIndicator]} />
-      <Text style={[
-        styles.profileSelectionName,
-        isSelected && styles.selectedProfileText
-      ]}>
+      <View
+        style={[
+          styles.selectionIndicator,
+          isSelected && styles.selectedIndicator,
+        ]}
+      />
+      <Text
+        style={[
+          styles.profileSelectionName,
+          isSelected && styles.selectedProfileText,
+        ]}
+      >
         {name}
       </Text>
     </TouchableOpacity>
@@ -103,16 +129,48 @@ const ProfileSelectionItem = ({ name, isSelected, onToggle }) => {
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
-  const ref = useRef(null);
+  const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const [isProfileToggleOn, setIsProfileToggleOn] = useState(true);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const [currentScreen, setCurrentScreen] = useState('main');
+  const [currentScreen, setCurrentScreen] = useState("main");
   const [previousScreen, setPreviousScreen] = useState(null);
   const isModalOpen = modalVisible && uri;
   const scrollViewRef = useRef(null);
+  const [base64, setBase64] = useState<string>();
+  const [restaurantText, setRestaurantText] = useState<string>();
+  const { mutate } = useGenerateReportMutation();
+  const [data, setData] = useState<Data>();
+
+  const onSubmit = async () => {
+    if (!uri) {
+      return;
+    }
+
+    const fileRes = await fetch(uri);
+    const blob = await fileRes.blob();
+
+    const fileName = uri.split("/").pop() || "photo.jpg";
+    const mimeType = blob.type || "image/jpeg"; // fallback if .type is missing
+
+    const formData = new FormData();
+    formData.append("image", {
+      uri,
+      name: fileName,
+      type: mimeType,
+    } as any);
+    formData.append("restaurantName", restaurantText as string);
+    formData.append("isJustMe", Boolean(!isProfileToggleOn).toString());
+
+    mutate(formData, {
+      onSuccess: (data) => {
+        setData(data);
+        setCurrentScreen("results");
+      },
+    });
+  };
 
   // Sample profiles data
   const initialProfiles = [
@@ -123,7 +181,7 @@ export default function CameraScreen() {
         { name: "Strawberry", severity: "Med.", color: "#F8CBA0" },
         { name: "Sesame", severity: "Sli.", color: "#D3D99C" },
       ],
-      selected: true
+      selected: true,
     },
     {
       name: "Bianca",
@@ -132,7 +190,7 @@ export default function CameraScreen() {
         { name: "Strawberry", severity: "Med.", color: "#F8CBA0" },
         { name: "Sesame", severity: "Sli.", color: "#D3D99C" },
       ],
-      selected: true
+      selected: true,
     },
     {
       name: "Gwen",
@@ -140,7 +198,7 @@ export default function CameraScreen() {
         { name: "Shellfish", severity: "Sev.", color: "#EFA6A6" },
         { name: "Peanuts", severity: "Sev.", color: "#EFA6A6" },
       ],
-      selected: false
+      selected: false,
     },
     {
       name: "Jacob",
@@ -148,10 +206,10 @@ export default function CameraScreen() {
         { name: "Dairy", severity: "Med.", color: "#F8CBA0" },
         { name: "Eggs", severity: "Sli.", color: "#D3D99C" },
       ],
-      selected: false
+      selected: false,
     },
   ];
-  
+
   const [profiles, setProfiles] = useState(initialProfiles);
   const cameraTransition = useRef(new Animated.Value(uri ? 1 : 0)).current;
 
@@ -162,11 +220,11 @@ export default function CameraScreen() {
 
   const handleBackButton = () => {
     if (!isModalOpen) return;
-    
-    if (currentScreen === 'allergenResults') {
-      navigateToScreen('profileSelection');
-    } else if (currentScreen === 'profileSelection') {
-      navigateToScreen('main');
+
+    if (currentScreen === "results") {
+      navigateToScreen("profileSelection");
+    } else if (currentScreen === "profileSelection") {
+      navigateToScreen("main");
     } else if (uri) {
       closePhotoView();
     }
@@ -186,7 +244,7 @@ export default function CameraScreen() {
     }).start(() => {
       setUri(null);
       setModalVisible(false);
-      setCurrentScreen(previousScreen || 'main');
+      setCurrentScreen(previousScreen || "main");
     });
   };
 
@@ -202,28 +260,29 @@ export default function CameraScreen() {
       },
       onPanResponderRelease: (evt, gs) => {
         if (gs.dy > 100) closePhotoView();
-        else Animated.spring(slideAnimation, {
-          toValue: 1,
-          friction: 8,
-          tension: 40,
-          useNativeDriver: true,
-        }).start();
+        else
+          Animated.spring(slideAnimation, {
+            toValue: 1,
+            friction: 8,
+            tension: 40,
+            useNativeDriver: true,
+          }).start();
       },
-    })
+    }),
   ).current;
 
   useEffect(() => {
     if (uri) {
       // Reset to main screen when taking a new picture
-      setCurrentScreen('main');
-      
+      setCurrentScreen("main");
+
       setModalVisible(true);
       Animated.timing(slideAnimation, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
       }).start();
-      
+
       cameraTransition.setValue(1);
     }
   }, [uri]);
@@ -238,7 +297,7 @@ export default function CameraScreen() {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({
         x: index * (CARD_WIDTH + CARD_SPACING),
-        animated: true
+        animated: true,
       });
     }
   };
@@ -251,26 +310,40 @@ export default function CameraScreen() {
 
   const handleCheckAllergens = () => {
     // For now, nothing happens when Check Allergens is clicked
-    console.log("Check Allergens clicked - no action for now, should go to the report screen");
+    console.log(
+      "Check Allergens clicked - no action for now, should go to the report screen",
+    );
   };
 
   const handleAddProfile = () => {
     // Only show profile selection when the + button is clicked
-    navigateToScreen('profileSelection');
+    navigateToScreen("profileSelection");
   };
 
   const handleDone = () => {
     // Go back to main screen when Done is clicked from profile selection
-    console.log("Check Allergens clicked - no action for now, should go to the report screen");
+    console.log(
+      "Check Allergens clicked - no action for now, should go to the report screen",
+    );
   };
 
   const handleSaveResults = () => {
     closePhotoView();
   };
 
+  function base64ToBlob(base64: string, mime: string): Blob {
+    const byteCharacters = atob(base64.split(",")[1]);
+    const byteNumbers = new Array(byteCharacters.length)
+      .fill(0)
+      .map((_, i) => byteCharacters.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mime });
+  }
+
   const takePicture = async () => {
     const photo = await ref.current?.takePictureAsync();
-    setUri(photo?.uri);
+    setBase64(photo?.base64);
+    setUri(photo?.uri as string);
   };
 
   if (!permission) {
@@ -287,7 +360,10 @@ export default function CameraScreen() {
   }
 
   const renderMainScreen = () => (
-    <ScrollView style={styles.scrollableContent} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      style={styles.scrollableContent}
+      showsVerticalScrollIndicator={false}
+    >
       {/* What's the Name Section */}
       <View style={styles.section}>
         <View style={styles.titleContainer}>
@@ -304,10 +380,13 @@ export default function CameraScreen() {
           style={styles.input}
           placeholder="Restaurant Name (eg. McDonalds)"
           placeholderTextColor="#999"
+          onChangeText={(text) => {
+            setRestaurantText(text);
+          }}
         />
         <View style={styles.divider} />
       </View>
-      
+
       {/* Profiles Section */}
       <View style={styles.section}>
         <View style={styles.titleContainer}>
@@ -325,7 +404,7 @@ export default function CameraScreen() {
             onValueChange={setIsProfileToggleOn}
           />
         </View>
-        
+
         {isProfileToggleOn ? (
           <>
             <Text style={styles.profilesSubtitle}>
@@ -371,7 +450,7 @@ export default function CameraScreen() {
                 />
               ))}
             </ScrollView>
-            
+
             {/* Pagination dots - now clickable */}
             <View style={styles.paginationContainer}>
               {profiles.map((_, index) => (
@@ -383,7 +462,9 @@ export default function CameraScreen() {
                   <View
                     style={[
                       styles.paginationDot,
-                      index === activeCardIndex ? styles.activeDot : styles.inactiveDot
+                      index === activeCardIndex
+                        ? styles.activeDot
+                        : styles.inactiveDot,
                     ]}
                   />
                 </TouchableOpacity>
@@ -391,18 +472,18 @@ export default function CameraScreen() {
             </View>
           </>
         )}
-        
+
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={[
               styles.checkAllergensButton,
-              !isProfileToggleOn && { marginRight: 8 }
+              !isProfileToggleOn && { marginRight: 8 },
             ]}
-            onPress={handleCheckAllergens}
+            onPress={onSubmit}
           >
             <Text style={styles.checkAllergensText}>Check Allergens</Text>
           </TouchableOpacity>
-          
+
           {!isProfileToggleOn && (
             <TouchableOpacity
               style={styles.addProfileButton}
@@ -413,7 +494,7 @@ export default function CameraScreen() {
           )}
         </View>
       </View>
-      
+
       {/* Add extra padding at the bottom */}
       <View style={{ height: 40 }} />
     </ScrollView>
@@ -423,7 +504,10 @@ export default function CameraScreen() {
     return (
       <View style={styles.profileSelectionContainer}>
         <Text style={styles.profileSelectionHeader}>Add Allergen Profiles</Text>
-        <ScrollView style={styles.profilesScrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.profilesScrollView}
+          showsVerticalScrollIndicator={false}
+        >
           {profiles.map((profile, index) => (
             <ProfileSelectionItem
               key={index}
@@ -433,12 +517,9 @@ export default function CameraScreen() {
             />
           ))}
         </ScrollView>
-        
+
         {/* Done button positioned at the bottom */}
-        <TouchableOpacity
-          style={styles.doneButton}
-          onPress={handleDone}
-        >
+        <TouchableOpacity style={styles.doneButton} onPress={handleDone}>
           <Text style={styles.doneButtonText}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -448,7 +529,7 @@ export default function CameraScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Camera view (always present, but opacity changes) */}
       <Animated.View
         style={[
@@ -462,7 +543,7 @@ export default function CameraScreen() {
             elevation: isModalOpen ? 0 : 2,
           },
         ]}
-        pointerEvents={isModalOpen ? 'none' : 'auto'}
+        pointerEvents={isModalOpen ? "none" : "auto"}
       >
         {/* Instruction text ABOVE the container */}
         <View style={styles.instructionTextContainer}>
@@ -470,7 +551,7 @@ export default function CameraScreen() {
             Take a picture of the menu / food item
           </Text>
         </View>
-        
+
         <CameraView style={styles.camera} ref={ref}>
           {/* Darkened overlay */}
           <View style={styles.darkOverlay} />
@@ -479,14 +560,14 @@ export default function CameraScreen() {
           {/* Bottom dark overlay */}
           <View style={styles.bottomDarkOverlay} />
         </CameraView>
-        
+
         <View style={styles.shutterContainer}>
           <Pressable style={styles.shutterBtn} onPress={takePicture}>
             {({ pressed }) => (
               <View
                 style={[
                   styles.shutterBtnInner,
-                  { backgroundColor: pressed ? '#ccc' : 'white' },
+                  { backgroundColor: pressed ? "#ccc" : "white" },
                 ]}
               />
             )}
@@ -506,6 +587,12 @@ export default function CameraScreen() {
           renderProfileSelectionScreen={renderProfileSelectionScreen}
           isModalOpen={isModalOpen}
           cameraTransition={cameraTransition}
+          profiles={
+            isProfileToggleOn
+              ? [{ name: "You", selected: true }]
+              : profiles.filter((p) => p.selected)
+          }
+          data={data}
         />
       )}
     </View>
@@ -518,7 +605,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   fullScreenContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -553,7 +640,7 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0,0,0,0.8)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
-    paddingTop: 21
+    paddingTop: 21,
   },
   centerRectangle: {
     position: "absolute",
@@ -606,18 +693,18 @@ const styles = StyleSheet.create({
     top: 0,
   },
   swipeIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 0,
     right: 0,
     zIndex: 1000,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 10,
   },
   swipeIndicatorBar: {
     width: 60,
     height: 5,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 5,
     opacity: 0.7,
   },
@@ -637,7 +724,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "absolute",
     top: -60,
-    backgroundColor: "#EAEA00"
+    backgroundColor: "#EAEA00",
   },
   modalContent: {
     flex: 1,
@@ -648,7 +735,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
-    position: 'relative',
+    position: "relative",
     paddingTop: 9,
   },
   sectionTitle: {
@@ -676,7 +763,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#eee",
     marginVertical: 45,
-    marginBottom: -10
+    marginBottom: -10,
   },
   profilesRow: {
     flexDirection: "row",
@@ -740,7 +827,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
-    marginBottom: 60
+    marginBottom: 60,
   },
   checkAllergensText: {
     fontSize: 18,
@@ -858,14 +945,14 @@ const styles = StyleSheet.create({
   inactiveDot: {
     backgroundColor: "#CCCCCC",
   },
-   // Profile selection screen styles
-   profileSelectionContainer: {
+  // Profile selection screen styles
+  profileSelectionContainer: {
     flex: 1,
     padding: 20,
     backgroundColor: "#FFFFFF",
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between', // This ensures space between content and button
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between", // This ensures space between content and button
   },
   profileSelectionHeader: {
     fontSize: 28,
@@ -915,7 +1002,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000", // Black button
     alignItems: "center",
     justifyContent: "center",
-    position: 'relative', // Make sure it's not absolute positioned
+    position: "relative", // Make sure it's not absolute positioned
     bottom: 75,
     borderRadius: 30, // No rounded corners for the Done button
   },

@@ -11,6 +11,7 @@ export const useProfilesQuery = () => {
       const data = (await res.json()) as {
         message: string;
       };
+      return data;
     },
   });
 };
@@ -53,10 +54,16 @@ export const useNewProfileMutation = () => {
         };
       };
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", "all"],
+      });
+    },
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["profile", "all"],
       });
+
     },
   });
 };
