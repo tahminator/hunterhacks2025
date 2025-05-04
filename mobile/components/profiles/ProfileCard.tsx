@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import ProfileAdd from './ProfileAdd';
 
-type Allergy = { name: string; severity: string; color?: string };
 
 type Props = {
   name: string;
-  allergies: Allergy[];
-  onSave?: (name: string, allergies: Allergy[]) => void;
-  onDelete?: () => void;
+  allergies: { name: string; severity: string; color?: string }[];
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
 const severityGradients: Record<string, [string, string]> = {
@@ -27,42 +24,10 @@ const severityGradients: Record<string, [string, string]> = {
 };
 
 export default function ProfileCard({
-  name: initialName,
-  allergies: initialAllergies,
-  onSave,
-  onDelete,
+  name,
+  allergies,
+  onEdit,
 }: Props) {
-  const [name, setName] = useState(initialName);
-  const [allergies, setAllergies] = useState<Allergy[]>([...initialAllergies]);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleModalSubmit = (profile: {
-    username: string;
-    profileName: string;
-    allergies: Allergy[];
-  }) => {
-    setName(profile.profileName);
-    setAllergies(profile.allergies);
-    setModalVisible(false);
-    onSave?.(profile.profileName, profile.allergies);
-  };
-
-  const handleDelete = () => {
-    setModalVisible(false);
-    onDelete?.();
-  };
-
-  const confirmDelete = () => {
-    Alert.alert(
-      'Delete Profile',
-      `Are you sure you want to delete "${name}"?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: handleDelete },
-      ]
-    );
-  };
-
   return (
     <View style={styles.card}>
       <View style={styles.leftSection}>
@@ -92,19 +57,10 @@ export default function ProfileCard({
         resizeMode="cover"
         imageStyle={styles.swooshImage}
       >
-        <TouchableOpacity style={styles.editButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity style={styles.editButton} onPress={onEdit}>
           <Text style={styles.editText}>Edit</Text>
         </TouchableOpacity>
       </ImageBackground>
-
-      <ProfileAdd
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSubmit={handleModalSubmit}
-        initialProfileName={name}
-        initialAllergies={allergies}
-        onDelete={confirmDelete}
-      />
     </View>
   );
 }

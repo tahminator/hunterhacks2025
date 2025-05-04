@@ -14,6 +14,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons'; 
 
 const { height } = Dimensions.get('window');
 
@@ -29,6 +30,12 @@ interface AddAllergyModalProps {
   onSubmit: (data: AllergyData) => void;
 }
 
+const severityGradients: Record<string, [string, string]> = {
+  Severe: ['#E66D57', '#4B0505'],
+  Medium: ['#f5a623', '#d97706'],
+  Slight: ['#a8e063', '#56ab2f'],
+};
+
 export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAllergyModalProps) {
   const [slideAnim] = useState(new Animated.Value(height));
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -37,34 +44,27 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
   const [allergy, setAllergy] = useState('');
   const [severity, setSeverity] = useState<string | null>(null);
 
-  const severityColors: { [key: string]: string } = {
-    slight: 'green',
-    medium: 'orange',
-    severe: 'darkred',
-  };
-
   useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
-        Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 6 }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: height, duration: 300, useNativeDriver: true }),
-        Animated.timing(scaleAnim, { toValue: 0.95, duration: 200, useNativeDriver: true }),
-      ]).start();
-    }
+    const inAnim = [
+      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, friction: 6 }),
+    ];
+    const outAnim = [
+      Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: height, duration: 300, useNativeDriver: true }),
+      Animated.timing(scaleAnim, { toValue: 0.95, duration: 200, useNativeDriver: true }),
+    ];
+    Animated.parallel(visible ? inAnim : outAnim).start();
   }, [visible, fadeAnim, slideAnim, scaleAnim]);
 
   const handleDone = () => {
     if (!allergy || !severity) return;
+    const label = severity.charAt(0).toUpperCase() + severity.slice(1);
     onSubmit({
       name: allergy,
-      severity: severity.charAt(0).toUpperCase() + severity.slice(1),
-      color: severityColors[severity],
+      severity: label,
+      color: severityGradients[label][0],
     });
     setAllergy('');
     setSeverity(null);
@@ -73,7 +73,7 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
   return (
     <Modal visible={visible} transparent animationType="none">
       <TouchableWithoutFeedback onPress={onClose}>
-        <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}> 
+        <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
           <TouchableWithoutFeedback>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -99,8 +99,8 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
                   />
                   <View style={styles.headerContentExpanded}>
                     <Text style={styles.title}>Add Allergy</Text>
-                    <TouchableOpacity onPress={onClose}>
-                      <Text style={styles.closeText}>X</Text>
+                    <TouchableOpacity onPress={onClose} style={{ padding: 8 }}>
+                      <Ionicons name="close" size={32} color="#fff" />
                     </TouchableOpacity>
                   </View>
 
@@ -118,23 +118,35 @@ export default function AddAllergyModal({ visible, onClose, onSubmit }: AddAller
 
                 <View style={styles.formBelow}>
                   <View style={styles.severityRow}>
-                    {['slight', 'medium', 'severe'].map(level => (
-                      <TouchableOpacity
-                        key={level}
-                        style={[
-                          styles.severityButton,
-                          severity === level && {
-                            borderColor: severityColors[level],
-                            backgroundColor: `${severityColors[level]}22`,
-                          },
-                        ]}
-                        onPress={() => setSeverity(level)}
-                      >
-                        <Text style={{ color: severityColors[level], fontWeight: 'bold' }}>
-                          {level.charAt(0).toUpperCase() + level.slice(1)}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
+                    {['slight', 'medium', 'severe'].map(level => {
+                      const Label = level.charAt(0).toUpperCase() + level.slice(1);
+                      const isSelected = severity === level;
+                      const gradientColors = severityGradients[Label];
+
+                      return (
+                        <TouchableOpacity
+                          key={level}
+                          onPress={() => setSeverity(level)}
+                          style={[
+                            styles.severityButton,
+                            {
+                              borderColor: gradientColors[0],
+                              backgroundColor: isSelected ? gradientColors[0] : '#fff',
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={{
+                              color: isSelected ? '#fff' : gradientColors[0],
+                              fontWeight: 'bold',
+                              fontSize: 16,
+                            }}
+                          >
+                            {Label}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
 
                   <TouchableOpacity style={styles.doneButton} onPress={handleDone}>
@@ -194,16 +206,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     paddingTop: 10,
   },
-  closeText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
   formOverlay: {
     zIndex: 2,
-  },
-  formBelow: {
-    padding: 20,
   },
   label: {
     fontSize: 16,
@@ -217,6 +221,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
+  formBelow: {
+    padding: 20,
+  },
   severityRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -224,13 +231,12 @@ const styles = StyleSheet.create({
   },
   severityButton: {
     flex: 1,
-    padding: 10,
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#ccc',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 6,
+    marginHorizontal: 5,
+    borderWidth: 2,
   },
   doneButton: {
     backgroundColor: '#000',
