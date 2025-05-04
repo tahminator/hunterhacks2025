@@ -181,7 +181,7 @@ export function PromptPage() {
                 onClick={() =>
                   generateReport({
                     restaurantName: resText,
-                    image: snapshotData,
+                    imageBase64: snapshotData,
                     isJustMe: isOnlyUser,
                   })
                 }

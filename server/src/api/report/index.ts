@@ -26,6 +26,56 @@ const severityText = (severity: z.infer<typeof severitySchema>) => {
   }
 };
 
+reportRouter.post("/generateFromURL", async (req, res) => {
+  if (!res.locals.user || !res.locals.session) {
+    res.status(400).json({
+      message: "You are not authenticated.",
+    });
+    return;
+  }
+
+  const { restaurantName, isJustMe, imageBase64 } = req.body as {
+    restaurantName: string;
+    isJustMe: string;
+    imageBase64: string;
+  };
+
+  if (!restaurantName) {
+    res.status(400).json({
+      message: "Restaurant name is missing from form data.",
+    });
+    return;
+  }
+
+  if (!imageBase64) {
+    res.status(400).json({
+      message: "No image data provided.",
+    });
+    return;
+  }
+
+  const base64Data = imageBase64.replace(/^data:image\/png;base64,/, "");
+  let imageBuffer: Buffer;
+  try {
+    imageBuffer = Buffer.from(base64Data, "base64");
+  } catch (err) {
+    res.status(400).json({ message: "Invalid base64 image data." });
+    return;
+  }
+
+  const ocrSingleton = new OcrSingleton();
+  const ocr = await ocrSingleton.getOcr();
+
+  const {
+    data: { text: ocrText },
+  } = await ocr.recognize(imageBuffer);
+
+  res.status(200).json({
+    message: "OCR complete!",
+    data: ocrText,
+  });
+});
+
 reportRouter.post("/generate", multer.single("image"), async (req, res) => {
   if (!res.locals.user || !res.locals.session) {
     res.status(400).json({
@@ -111,8 +161,10 @@ ${ocrText}
   for (const profile of profiles) {
     const { object } = await generateObject({
       model,
-      prompt: `Hi, my name is ${profile.firstName} ${profile.lastName} and I have ${profile.allergies.map(
-        (a) => `a ${severityText(a.severity)} ${a.itemName} allergy,`,
+      prompt: `Hi, my name is ${profile.firstName} ${
+        profile.lastName
+      } and I have ${profile.allergies.map(
+        (a) => `a ${severityText(a.severity)} ${a.itemName} allergy,`
       )}. Given that, analyze the ingredients found in each item on this menu from ${restaurantName}.
 
       ${strippedText}
@@ -178,7 +230,7 @@ reportRouter.post(
       message: "Your report is complete!",
       data: result,
     });
-  },
+  }
 );
 
 // This is a test endpoint that returns the same shape as the actual endpoint, with 2 profile.
@@ -263,5 +315,5 @@ reportRouter.post(
       message: "Your report is complete!",
       data: result,
     });
-  },
+  }
 );
