@@ -10,6 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
+import { toDisplaySeverity } from "@/lib/severity";
 
 type Props = {
   name: string;
@@ -23,9 +24,9 @@ type Props = {
 };
 
 const severityGradients: Record<string, [string, string]> = {
-  low: ["#E66D57", "#4B0505"],
+  high: ["#E66D57", "#4B0505"],
   med: ["#f5a623", "#d97706"],
-  high: ["#a8e063", "#56ab2f"],
+  low: ["#a8e063", "#56ab2f"],
 };
 
 export default function ProfileCard({ name, allergies, onEdit }: Props) {
@@ -41,7 +42,11 @@ export default function ProfileCard({ name, allergies, onEdit }: Props) {
                 • {a.itemName}{" "}
               </Text>
               <MaskedView
-                maskElement={<Text style={styles.level}>({a.severity})</Text>}
+                maskElement={
+                  <Text style={styles.level}>
+                    ({toDisplaySeverity(a.severity)})
+                  </Text>
+                }
               >
                 <LinearGradient
                   colors={gradient}
@@ -49,7 +54,7 @@ export default function ProfileCard({ name, allergies, onEdit }: Props) {
                   end={{ x: 1, y: 0 }}
                 >
                   <Text style={[styles.level, { opacity: 0 }]}>
-                    ({a.severity})
+                    ({toDisplaySeverity(a.severity)})
                   </Text>
                 </LinearGradient>
               </MaskedView>
