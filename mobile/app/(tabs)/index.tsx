@@ -12,7 +12,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import LoginModal from "../../components/LoginModal";
 import TypingEffect from "../../components/TypingEffect";
-import { apiFetch } from "@/lib/apiFetch";
 import { useAuthQuery, useGuestLoginMutation } from "@/apis/queries/auth";
 import { useRouter } from "expo-router";
 
@@ -50,7 +49,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (status === "success") {
-      if (data.data.user && data.data.session) {
+      if (data?.data?.user && data?.data?.session) {
         router.push("/profile/ProfileScreen");
       }
     }
