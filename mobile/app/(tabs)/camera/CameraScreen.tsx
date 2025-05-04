@@ -81,7 +81,9 @@ const ProfileCard = ({ name, allergies, isSelected, onSelect }) => {
           backgroundColor={getColorBySeverity(allergy.severity)}
         >
           <Text style={styles.allergyText}>{allergy.itemName}</Text>
-          <Text style={styles.allergySeverity}>({allergy.severity})</Text>
+          <Text style={styles.allergySeverity}>
+            ({toDisplaySeverity(allergy.severity)})
+          </Text>
         </View>
       ))}
     </TouchableOpacity>
