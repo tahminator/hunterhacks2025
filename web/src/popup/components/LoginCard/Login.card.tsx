@@ -8,7 +8,6 @@ import {
   Button,
 } from '@mantine/core'
 import { useState } from 'react'
-import styles from './Login.module.css'
 import { useLoginMutation } from '@base/popup/api/auth'
 
 interface LoginCardProps {
@@ -46,6 +45,7 @@ export function LoginCard({ close }: LoginCardProps) {
       <TextInput
         value={password}
         label="Password"
+        type="password"
         description="Enter your password"
         onChange={(event) => setPassword(event.currentTarget.value)}
         leftSection={personIcon}

@@ -124,7 +124,7 @@ export const useRegisterMutation = () => {
       firstName: string
       lastName: string
     }) => {
-      const response = await axios.post(`${HOSTNAME}/api/auth/register`, {
+      const response = await axios.post(`${HOSTNAME}/api/auth/signup`, {
         username,
         email,
         password,

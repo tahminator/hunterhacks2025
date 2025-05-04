@@ -16,6 +16,7 @@ import { TypeAnimation } from 'react-type-animation'
 import { useGuestLoginMutation } from '@base/popup/api/auth'
 import { useDisclosure } from '@mantine/hooks'
 import { LoginCard } from '@base/popup/components/LoginCard/Login.card'
+import { RegisterCard } from '@base/popup/components/RegisterCard/Register.card'
 
 const TypingText = () => {
   return (
@@ -90,6 +91,8 @@ function GradientOverlay() {
 function LandingPage() {
   const [loginOpened, { open: loginOpen, close: loginClose }] =
     useDisclosure(false)
+  const [registerOpened, { open: registerOpen, close: registerClose }] =
+    useDisclosure(false)
   const { mutate: loginGuest } = useGuestLoginMutation()
   const allergens = [
     'Gluten',
@@ -120,7 +123,7 @@ function LandingPage() {
             <Button flex={2} color="olivine.8" onClick={loginOpen}>
               Login
             </Button>
-            <Button flex={1} color="olivine.6">
+            <Button flex={1} color="olivine.6" onClick={registerOpen}>
               Register
             </Button>
           </Group>
@@ -143,6 +146,18 @@ function LandingPage() {
         }}
       >
         <LoginCard close={loginClose} />
+      </Drawer>
+      <Drawer
+        size={'lg'}
+        withCloseButton={false}
+        position="bottom"
+        opened={registerOpened}
+        onClose={registerClose}
+        classNames={{
+          content: styles.authCardHeader,
+        }}
+      >
+        <RegisterCard close={registerClose} />
       </Drawer>
     </>
   )
