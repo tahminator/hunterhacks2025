@@ -10,6 +10,7 @@ import {
   setSessionTokenCookie,
 } from "@/lib/auth";
 import cookieGen from "@/lib/cookie-gen";
+import { randomUUID } from "crypto";
 
 export const authRouter = Router();
 
@@ -177,5 +178,53 @@ authRouter.post("/logout", async (req, res) => {
 
   res.status(200).json({
     message: "You have been successfuly logged out!",
+  });
+});
+
+authRouter.post("/guest", async (req, res) => {
+  if (res.locals.user && res.locals.session) {
+    res.status(403).json({
+      message: "You are already authenticated.",
+    });
+    return;
+  }
+
+  const user = await db.user.create({
+    data: {
+      email: "guestuser@hunterhacks2025.org",
+      username: `guestuser-${randomUUID()}`,
+      profileUrl: "https://picsum.photos/id/237/536/354",
+      firstName: "Guest",
+      lastName: "User",
+      password: await hash(randomUUID(), 10),
+    },
+  });
+
+  const profile = await db.profile.create({
+    data: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profileUrl: user.profileUrl,
+      User: {
+        connect: { username: user.username },
+      },
+    },
+  });
+
+  await db.user.update({
+    where: { id: user.id },
+    data: {
+      activeProfileId: profile.id,
+    },
+  });
+
+  const sessionToken = generateSessionToken();
+
+  const session = await createSession(sessionToken, user.id);
+  setSessionTokenCookie(res, session.id, session.expiresAt);
+
+  res.status(200).json({
+    message:
+      "You are now authenticated as a guest! Please keep in mind, once you log out, your data will be unrecoverable.",
   });
 });
