@@ -9,7 +9,7 @@ export class OcrSingleton {
 
   public async getOcr() {
     if (!this.ocr) {
-      this.ocr = await createWorker(["eng", "spa", "chi_sim", "chi_tra"]);
+      this.ocr = await createWorker(["eng", "spa", "chi_sim"]);
     }
 
     return this.ocr;
