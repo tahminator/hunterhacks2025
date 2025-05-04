@@ -19,6 +19,7 @@ import { useRouter } from "expo-router";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
 import { useProfilesQuery } from "@/apis/queries/profiles";
+import { useAddAllergyMutation } from "@/apis/queries/allergy";
 
 type InternalSeverity = "high" | "med" | "low";
 type LabelSeverity = "Severe" | "Medium" | "Slight";
@@ -44,6 +45,7 @@ export default function ProfileScreen() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const router = useRouter();
   const { status: profileStatus, data } = useProfilesQuery();
+  const { mutate: addAllergyMutate } = useAddAllergyMutation();
 
   const [mainAllergies, setMainAllergies] = useState<
     {
@@ -116,7 +118,7 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>My Allergies</Text>
-          {mainAllergies.map((a, i) => (
+          {envelope.data.user?.activeProfile.allergies.map((a, i) => (
             <AllergyDashboard
               key={i}
               name={a.itemName}
@@ -145,21 +147,24 @@ export default function ProfileScreen() {
             Add allergens for your friends, family, coworkers...
           </Text>
 
-          {profiles.map((profile, index) => (
-            <ProfileCard
-              key={index}
-              name={profile.name}
-              allergies={profile.allergies.map((allergy) => ({
-                ...allergy,
-                color: allergy.color ?? "defaultColor",
-              }))}
-              onEdit={() => {
-                setEditingIndex(index);
-                setShowOtherProfileModal(true);
-              }}
-              onDelete={() => handleRemoveProfile(index)}
-            />
-          ))}
+          {profiles.map((profile, index) => {
+            if (index === 0) return null;
+            return (
+              <ProfileCard
+                key={index}
+                name={profile.name}
+                allergies={profile.allergies.map((allergy) => ({
+                  ...allergy,
+                  color: allergy.color ?? "defaultColor",
+                }))}
+                onEdit={() => {
+                  setEditingIndex(index);
+                  setShowOtherProfileModal(true);
+                }}
+                onDelete={() => handleRemoveProfile(index)}
+              />
+            );
+          })}
 
           <TouchableOpacity
             style={styles.addProfileButton}
@@ -177,7 +182,31 @@ export default function ProfileScreen() {
         visible={showAddAllergyModal}
         onClose={() => setShowAddAllergyModal(false)}
         onSubmit={(newAllergy) => {
-          setMainAllergies((prev) => [...prev, newAllergy]);
+          if (status !== "success") {
+            return;
+          }
+
+          addAllergyMutate({
+            profileId: envelope.data.user?.activeProfileId ?? "",
+            allergies: [
+              {
+                itemName: newAllergy.itemName,
+                severity: (() => {
+                  const severityString = newAllergy.severity as string;
+                  if (severityString === "Slight") {
+                    return "low";
+                  }
+                  if (severityString === "Medium") {
+                    return "med";
+                  }
+                  if (severityString === "Severe") {
+                    return "high";
+                  }
+                  return "low";
+                })(),
+              },
+            ],
+          });
           setShowAddAllergyModal(false);
         }}
       />
