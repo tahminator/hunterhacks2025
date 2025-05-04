@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const useGenerateReportMutation = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      // const res = await apiFetch("/api/report/generate", {
-      const res = await apiFetch("/api/report/generate/test/2", {
+      const res = await apiFetch("/api/report/generate", {
+        // const res = await apiFetch("/api/report/generate/test/2", {
         method: "POST",
         body: formData,
       });
