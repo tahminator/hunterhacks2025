@@ -17,7 +17,10 @@ export const useSignup= () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
-        return res.json();
+        const data = await res.json() as {
+            message: string;
+          };
+          
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["auth", "@me"] });
@@ -28,13 +31,15 @@ export const useSignup= () => {
     const queryClient = useQueryClient();
   
     return useMutation({
-      mutationFn: async (data: { username: string; password: string }) => {
+      mutationFn: async () => {
         const res = await apiFetch("/api/auth/login", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
         });
-        return res.json();
+        const data = await res.json() as {
+            message: string;
+          };
+          
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["auth", "@me"] });
@@ -49,7 +54,10 @@ export const useSignup= () => {
         const res = await apiFetch("/api/auth/guest", {
           method: "POST",
         });
-        return res.json();
+        const data = await res.json() as {
+            message: string;
+          };
+          
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["auth", "@me"] });
@@ -64,7 +72,10 @@ export const useSignup= () => {
         const res = await apiFetch("/api/auth/logout", {
           method: "POST",
         });
-        return res.json();
+        const data = await res.json() as {
+            message: string;
+          };
+          
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["auth", "@me"] });
