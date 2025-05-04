@@ -70,9 +70,77 @@ reportRouter.post("/generateFromURL", async (req, res) => {
     data: { text: ocrText },
   } = await ocr.recognize(imageBuffer);
 
+
+  const { text: strippedText } = await generateText({
+    model,
+    prompt: `Remove the extra noise from this OCR text.\
+    For context, it is a restaurant menu, so make sure to keep those items.\
+    You can split menu items by new lines
+
+${ocrText}
+    `,
+  });
+
+  let profiles: ({
+    allergies: {
+      id: string;
+      severity: AllergySeverity;
+      itemName: string;
+      profileId: string;
+    }[];
+  } & {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profileUrl: string;
+    userId: string;
+  })[];
+  if (isJustMe === "1") {
+    profiles = await db.profile.findMany({
+      where: {
+        activeForUser: {
+          id: res.locals.user.id,
+        },
+      },
+      include: {
+        allergies: true,
+      },
+    });
+  } else {
+    profiles = await db.profile.findMany({
+      where: {
+        userId: res.locals.user.id,
+      },
+      include: {
+        allergies: true,
+      },
+    });
+  }
+
+  let result: z.infer<typeof reportSchema>[] = [];
+
+  for (const profile of profiles) {
+    const { object } = await generateObject({
+      model,
+      prompt: `Hi, my name is ${profile.firstName} ${
+        profile.lastName
+      } and I have ${profile.allergies.map(
+        (a) => `a ${severityText(a.severity)} ${a.itemName} allergy,`
+      )}. Given that, analyze the ingredients found in each item on this menu from ${restaurantName}.
+
+      ${strippedText}
+
+      Give me a description of why I cannot eat the item, things to possibly to be cautious about, and more.
+      In your description, do not include a warning about cross-contamination or inquiring the restaurant. This is already disclosed.`,
+      schemaName: "allergies_report",
+      schema: reportSchema,
+    });
+    result.push(object);
+  }
+
   res.status(200).json({
-    message: "OCR complete!",
-    data: ocrText,
+    message: "Your report is complete!",
+    data: result,
   });
 });
 
