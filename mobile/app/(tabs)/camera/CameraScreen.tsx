@@ -19,6 +19,10 @@ import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
 import PhotoModal from "../../../components/PhotoModal";
 import { useGenerateReportMutation } from "@/apis/queries/report";
+import { useProfilesQuery } from "@/apis/queries/profiles";
+import { z } from "zod";
+import { severitySchema } from "@/apis/schema/allergies";
+import { useAuthQuery } from "@/apis/queries/auth";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.43;
@@ -72,9 +76,9 @@ const ProfileCard = ({ name, allergies, isSelected, onSelect }) => {
         <View
           key={index}
           style={styles.allergyTag}
-          backgroundColor={allergy.color}
+          backgroundColor={getColorBySeverity(allergy.severity)}
         >
-          <Text style={styles.allergyText}>{allergy.name}</Text>
+          <Text style={styles.allergyText}>{allergy.itemName}</Text>
           <Text style={styles.allergySeverity}>({allergy.severity})</Text>
         </View>
       ))}
@@ -127,6 +131,18 @@ const ProfileSelectionItem = ({ name, isSelected, onToggle }) => {
   );
 };
 
+type Severity = z.infer<typeof severitySchema>;
+
+const severityColorMap: Record<Severity, string> = {
+  high: "#EFA6A6",
+  med: "#F8CBA0",
+  low: "#D3D99C",
+};
+
+function getColorBySeverity(severity: Severity): string {
+  return severityColorMap[severity];
+}
+
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
@@ -143,6 +159,54 @@ export default function CameraScreen() {
   const [restaurantText, setRestaurantText] = useState<string>();
   const { mutate } = useGenerateReportMutation();
   const [data, setData] = useState<Data>();
+  const [profiles, setProfiles] = useState<
+    {
+      name: string;
+      firstName: string;
+      lastName: string;
+      allergies: {
+        itemName: string;
+        severity: z.infer<typeof severitySchema>;
+        color?: string;
+      }[];
+    }[]
+  >();
+  const { status: profileStatus, data: profileData } = useProfilesQuery();
+  const { status: authStatus, data: authData } = useAuthQuery();
+
+  useEffect(() => {
+    if (!isProfileToggleOn) {
+      if (profileStatus === "success") {
+        setProfiles(profileData.data);
+      }
+    } else {
+      if (authStatus === "success") {
+        if (authData.data && authData.data.user?.activeProfile) {
+          setProfiles([
+            {
+              ...authData.data.user?.activeProfile,
+              name:
+                authData.data.user.activeProfile.firstName +
+                " " +
+                authData.data.user.activeProfile.lastName,
+            },
+          ]);
+        }
+      }
+    }
+  }, [
+    authData?.data,
+    authStatus,
+    isProfileToggleOn,
+    profileData?.data,
+    profileStatus,
+  ]);
+
+  useEffect(() => {
+    if (profileStatus === "success") {
+      setProfiles(profileData.data);
+    }
+  }, [profileData?.data, profileStatus]);
 
   const onSubmit = async () => {
     if (!uri) {
@@ -171,46 +235,6 @@ export default function CameraScreen() {
       },
     });
   };
-
-  // Sample profiles data
-  const initialProfiles = [
-    {
-      name: "Daniel",
-      allergies: [
-        { name: "Gluten", severity: "Sev.", color: "#EFA6A6" },
-        { name: "Strawberry", severity: "Med.", color: "#F8CBA0" },
-        { name: "Sesame", severity: "Sli.", color: "#D3D99C" },
-      ],
-      selected: true,
-    },
-    {
-      name: "Bianca",
-      allergies: [
-        { name: "Gluten", severity: "Sev.", color: "#EFA6A6" },
-        { name: "Strawberry", severity: "Med.", color: "#F8CBA0" },
-        { name: "Sesame", severity: "Sli.", color: "#D3D99C" },
-      ],
-      selected: true,
-    },
-    {
-      name: "Gwen",
-      allergies: [
-        { name: "Shellfish", severity: "Sev.", color: "#EFA6A6" },
-        { name: "Peanuts", severity: "Sev.", color: "#EFA6A6" },
-      ],
-      selected: false,
-    },
-    {
-      name: "Jacob",
-      allergies: [
-        { name: "Dairy", severity: "Med.", color: "#F8CBA0" },
-        { name: "Eggs", severity: "Sli.", color: "#D3D99C" },
-      ],
-      selected: false,
-    },
-  ];
-
-  const [profiles, setProfiles] = useState(initialProfiles);
   const cameraTransition = useRef(new Animated.Value(uri ? 1 : 0)).current;
 
   const navigateToScreen = (screen) => {
@@ -440,12 +464,11 @@ export default function CameraScreen() {
               pagingEnabled={false}
               snapToAlignment="center"
             >
-              {profiles.map((profile, index) => (
+              {profiles?.map((profile, index) => (
                 <ProfileCard
                   key={index}
                   name={profile.name}
                   allergies={profile.allergies}
-                  isSelected={profile.selected}
                   onSelect={() => toggleProfileSelection(index)}
                 />
               ))}
@@ -453,7 +476,7 @@ export default function CameraScreen() {
 
             {/* Pagination dots - now clickable */}
             <View style={styles.paginationContainer}>
-              {profiles.map((_, index) => (
+              {profiles?.map((_, index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => scrollToCard(index)}
@@ -508,7 +531,7 @@ export default function CameraScreen() {
           style={styles.profilesScrollView}
           showsVerticalScrollIndicator={false}
         >
-          {profiles.map((profile, index) => (
+          {profiles?.map((profile, index) => (
             <ProfileSelectionItem
               key={index}
               name={profile.name}
@@ -587,11 +610,7 @@ export default function CameraScreen() {
           renderProfileSelectionScreen={renderProfileSelectionScreen}
           isModalOpen={isModalOpen}
           cameraTransition={cameraTransition}
-          profiles={
-            isProfileToggleOn
-              ? [{ name: "You", selected: true }]
-              : profiles.filter((p) => p.selected)
-          }
+          profiles={profiles}
           data={data}
         />
       )}
