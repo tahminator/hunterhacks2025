@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import {
   ScrollView,
   View,
-  Text, 
+  Text,
   TouchableOpacity,
   StyleSheet,
   NativeSyntheticEvent,
@@ -15,11 +15,20 @@ import ProfileCard from '../../../components/profiles/ProfileCard';
 import AddAllergyModal from '../../../components/profiles/AllergyModal';
 import AddOtherAllergenProfileModal from '../../../components/profiles/ProfileAdd';
 
-export default function ProfileDashboard() {
+export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [scrollY, setScrollY] = useState(0);
   const [showAddAllergyModal, setShowAddAllergyModal] = useState(false);
   const [showOtherProfileModal, setShowOtherProfileModal] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+  const [mainAllergies, setMainAllergies] = useState<
+    { name: string; severity: string; color?: string }[]
+  >([]);
+
+  const [profiles, setProfiles] = useState<
+    { name: string; allergies: { name: string; severity: string; color?: string }[] }[]
+  >([]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -32,20 +41,27 @@ export default function ProfileDashboard() {
     }
   };
 
-  const handleAddProfile = (profile: { username: string; profileName: string; allergies: { name: string; severity: string; color?: string }[] }) => {
-    setProfiles(prev => [...prev, { name: profile.profileName, allergies: profile.allergies }]);
+  const handleAddOrEditProfile = (profile: {
+    username: string;
+    profileName: string;
+    allergies: { name: string; severity: string; color?: string }[];
+  }) => {
+    if (editingIndex !== null) {
+      setProfiles(prev => {
+        const updated = [...prev];
+        updated[editingIndex] = { name: profile.profileName, allergies: profile.allergies };
+        return updated;
+      });
+    } else {
+      setProfiles(prev => [...prev, { name: profile.profileName, allergies: profile.allergies }]);
+    }
     setShowOtherProfileModal(false);
+    setEditingIndex(null);
   };
 
   const handleRemoveProfile = (index: number) => {
     setProfiles(prev => prev.filter((_, i) => i !== index));
   };
-  const [mainAllergies, setMainAllergies] = useState<
-  { name: string; severity: string; color?: string }[]
->([]);
-  const [profiles, setProfiles] = useState<
-    { name: string; allergies: { name: string; severity: string; color?: string }[] }[]
-  >([]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -94,15 +110,22 @@ export default function ProfileDashboard() {
               name={profile.name}
               allergies={profile.allergies.map(allergy => ({
                 ...allergy,
-                color: allergy.color ?? 'defaultColor', 
+                color: allergy.color ?? 'defaultColor',
               }))}
+              onEdit={() => {
+                setEditingIndex(index);
+                setShowOtherProfileModal(true);
+              }}
               onDelete={() => handleRemoveProfile(index)}
             />
           ))}
 
           <TouchableOpacity
             style={styles.addProfileButton}
-            onPress={() => setShowOtherProfileModal(true)}
+            onPress={() => {
+              setEditingIndex(null);
+              setShowOtherProfileModal(true);
+            }}
           >
             <Text>Add Profile</Text>
           </TouchableOpacity>
@@ -120,8 +143,22 @@ export default function ProfileDashboard() {
 
       <AddOtherAllergenProfileModal
         visible={showOtherProfileModal}
-        onClose={() => setShowOtherProfileModal(false)}
-        onSubmit={(profile) => handleAddProfile(profile)}
+        onClose={() => {
+          setShowOtherProfileModal(false);
+          setEditingIndex(null);
+        }}
+        onSubmit={handleAddOrEditProfile}
+        initialProfileName={editingIndex !== null ? profiles[editingIndex].name : ''}
+        initialAllergies={editingIndex !== null ? profiles[editingIndex].allergies : []}
+        onDelete={
+          editingIndex !== null
+            ? () => {
+                handleRemoveProfile(editingIndex);
+                setShowOtherProfileModal(false);
+                setEditingIndex(null);
+              }
+            : undefined
+        }
       />
     </View>
   );

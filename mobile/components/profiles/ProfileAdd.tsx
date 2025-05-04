@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { Ionicons } from '@expo/vector-icons';
 import AddAllergyModal from '../profiles/AllergyModal';
 
 type Allergy = { name: string; severity: string; color?: string };
@@ -56,6 +57,20 @@ export default function ProfileAdd({
     Medium: ['#f5a623', '#d97706'],
     Slight: ['#a8e063', '#56ab2f'],
   };
+
+  useEffect(() => {
+    if (visible) {
+      if (!initialProfileName) {
+        setUsername('');
+        setProfileName('');
+        setAllergies([]);
+      } else {
+        setUsername(initialProfileName);
+        setProfileName(initialProfileName);
+        setAllergies(initialAllergies || []);
+      }
+    }
+  }, [visible, initialProfileName, initialAllergies]);
 
   const removeAllergy = (index: number) => {
     setAllergies((prev) => prev.filter((_, i) => i !== index));
@@ -120,8 +135,8 @@ export default function ProfileAdd({
 
                 return (
                   <View key={i} style={styles.allergyItem}>
-                    <TouchableOpacity onPress={() => removeAllergy(i)}>
-                      <Text style={styles.remove}>x</Text>
+                    <TouchableOpacity onPress={() => removeAllergy(i)} style={{ paddingRight: 8 }}>
+                      <Ionicons name="close" size={20} color="#444" />
                     </TouchableOpacity>
 
                     <Text style={styles.allergyName}>{a.name}</Text>
@@ -215,7 +230,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
-  remove: { marginRight: 10, fontSize: 16 },
   allergyName: { fontWeight: 'bold', color: '#6a762c', flex: 1 },
   severity: { fontWeight: 'bold', marginRight: 10, fontSize: 14 },
   arcImage: {
