@@ -180,6 +180,7 @@ export function PromptPage() {
                   generateReport({
                     restaurantName: resText,
                     image: snapshotData,
+                    isJustMe: isOnlyUser,
                   })
                 }
                 flex={1}

@@ -16,6 +16,7 @@ export const useGuestLoginMutation = () => {
     },
   })
 }
+
 export const useLogoutMutation = () => {
   const queryClient = useQueryClient()
 
@@ -76,6 +77,67 @@ export const useAuthQuery = () => {
         }
       }
       return data
+    },
+  })
+}
+
+export const useLoginMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      username,
+      password,
+    }: {
+      username: string
+      password: string
+    }) => {
+      const response = await axios.post(`${HOSTNAME}/api/auth/login`, {
+        username,
+        password,
+      })
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', '@me'] })
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+  })
+}
+
+export const useRegisterMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+    }: {
+      username: string
+      email: string
+      password: string
+      firstName: string
+      lastName: string
+    }) => {
+      const response = await axios.post(`${HOSTNAME}/api/auth/register`, {
+        username,
+        email,
+        password,
+        firstName,
+        lastName,
+      })
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', '@me'] })
+    },
+    onError: (err) => {
+      console.error(err)
     },
   })
 }

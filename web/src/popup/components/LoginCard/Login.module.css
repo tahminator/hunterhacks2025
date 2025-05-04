@@ -1,0 +1,5 @@
+.auth-card-header {
+  background: url('@assets/auth-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

@@ -33,3 +33,11 @@
   line-height: 4.5rem !important;
   color: transparent;
 }
+
+.auth-card-header {
+  background: url('@assets/auth-bg.png');
+  background-color: white;
+  background-size: contain;
+  border-radius: 20px 20px 0 0;
+  background-repeat: no-repeat;
+}

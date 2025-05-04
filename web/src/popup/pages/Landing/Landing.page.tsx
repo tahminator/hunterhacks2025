@@ -1,9 +1,21 @@
 import styles from './Landing.module.css'
 import LogoURL from '@assets/Logo.png'
-import { Title, Stack, Text, Group, Box, Image, Button } from '@mantine/core'
+import {
+  Title,
+  Stack,
+  Text,
+  Group,
+  Box,
+  Image,
+  Button,
+  Modal,
+  Drawer,
+} from '@mantine/core'
 
 import { TypeAnimation } from 'react-type-animation'
 import { useGuestLoginMutation } from '@base/popup/api/auth'
+import { useDisclosure } from '@mantine/hooks'
+import { LoginCard } from '@base/popup/components/LoginCard/Login.card'
 
 const TypingText = () => {
   return (
@@ -76,6 +88,8 @@ function GradientOverlay() {
 }
 
 function LandingPage() {
+  const [loginOpened, { open: loginOpen, close: loginClose }] =
+    useDisclosure(false)
   const { mutate: loginGuest } = useGuestLoginMutation()
   const allergens = [
     'Gluten',
@@ -88,36 +102,49 @@ function LandingPage() {
   ]
 
   return (
-    <Box h={'100%'} id={styles.landingContainer}>
-      <TextCutoutBackground textArray={allergens} />
-      <Box pos={'absolute'} top={'170px'} mx={'50'} w={'60%'}>
-        <Image src={LogoURL} style={{ zIndex: 99 }} />
-      </Box>
-      <GradientOverlay />
-      <Stack
-        px="10"
-        w={'100%'}
-        pos={'absolute'}
-        bottom={'30px'}
-        style={{ zIndex: 99 }}
-      >
-        <Group>
-          <Button flex={2} color="olivine.8">
-            Login
-          </Button>
-          <Button flex={1} color="olivine.6">
-            Register
-          </Button>
-        </Group>
-        <Button
-          onClick={() => loginGuest()}
-          variant="outline"
-          color={'rgba(0, 0, 0, 1)'}
+    <>
+      <Box h={'100%'} id={styles.landingContainer}>
+        <TextCutoutBackground textArray={allergens} />
+        <Box pos={'absolute'} top={'170px'} mx={'50'} w={'60%'}>
+          <Image src={LogoURL} style={{ zIndex: 99 }} />
+        </Box>
+        <GradientOverlay />
+        <Stack
+          px="10"
+          w={'100%'}
+          pos={'absolute'}
+          bottom={'30px'}
+          style={{ zIndex: 99 }}
         >
-          Continue As Guest
-        </Button>
-      </Stack>
-    </Box>
+          <Group>
+            <Button flex={2} color="olivine.8" onClick={loginOpen}>
+              Login
+            </Button>
+            <Button flex={1} color="olivine.6">
+              Register
+            </Button>
+          </Group>
+          <Button
+            onClick={() => loginGuest()}
+            variant="outline"
+            color={'rgba(0, 0, 0, 1)'}
+          >
+            Continue As Guest
+          </Button>
+        </Stack>
+      </Box>
+      <Drawer
+        withCloseButton={false}
+        position="bottom"
+        opened={loginOpened}
+        onClose={loginClose}
+        classNames={{
+          content: styles.authCardHeader,
+        }}
+      >
+        <LoginCard close={loginClose} />
+      </Drawer>
+    </>
   )
 }
 
