@@ -620,7 +620,6 @@ export default function CameraScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 64,
     flex: 1,
     backgroundColor: "#000",
   },
