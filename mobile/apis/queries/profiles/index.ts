@@ -11,6 +11,7 @@ export const useProfilesQuery = () => {
       const data = (await res.json()) as {
         message: string;
       };
+      return data;
     },
   });
 };
