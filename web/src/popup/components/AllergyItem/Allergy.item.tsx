@@ -59,7 +59,7 @@ export function AllergyItem({ allergy, hideable = false }: AllergyItemProps) {
         style={{ borderRadius: '20px' }}
       >
         <ActionIcon display={!hideable ? 'none' : 'block'} />
-        <Text flex={1}>{allergy.name}</Text>
+        <Text flex={1}>{allergy.itemName}</Text>
         <Text tt="capitalize" size="sm" fw={'600'} pr={38}>
           {displayLevel(allergy.severity)}
         </Text>

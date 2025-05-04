@@ -68,12 +68,12 @@ export function AllergyCard({
               >
                 <Group
                   px={'lg'}
-                  key={allergy.name}
+                  key={allergy.itemName}
                   align="center"
                   justify="center"
                 >
                   <Text flex={1} size="sm" fw={'500'}>
-                    {allergy.name}
+                    {allergy.itemName}
                   </Text>
                   <Text tt="capitalize" size="xs">
                     ({displayLevel(allergy.severity).substring(0, 3)})

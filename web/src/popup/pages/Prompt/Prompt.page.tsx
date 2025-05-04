@@ -46,35 +46,35 @@ export function PromptPage() {
 
   const sampleAllergenProfiles: AllergenProfile[] = [
     {
-      profileName: 'John Doe',
+      name: 'John Doe',
       allergies: [
-        { name: 'Peanuts', severity: Severity.high },
-        { name: 'Milk', severity: Severity.low },
+        { itemName: 'Peanuts', severity: Severity.high },
+        { itemName: 'Milk', severity: Severity.low },
       ],
     },
     {
-      profileName: 'Jane Smith',
+      name: 'Jane Smith',
       allergies: [
-        { name: 'Shellfish', severity: Severity.high },
-        { name: 'Eggs', severity: Severity.med },
+        { itemName: 'Shellfish', severity: Severity.high },
+        { itemName: 'Eggs', severity: Severity.med },
       ],
     },
     {
-      profileName: 'Alice Johnson',
+      name: 'Alice Johnson',
       allergies: [
-        { name: 'Wheat', severity: Severity.med },
-        { name: 'Soy', severity: Severity.low },
+        { itemName: 'Wheat', severity: Severity.med },
+        { itemName: 'Soy', severity: Severity.low },
       ],
     },
     {
-      profileName: 'Mark Lee',
-      allergies: [{ name: 'Tree Nuts', severity: Severity.high }],
+      name: 'Mark Lee',
+      allergies: [{ itemName: 'Tree Nuts', severity: Severity.high }],
     },
     {
-      profileName: 'Emily Chen',
+      name: 'Emily Chen',
       allergies: [
-        { name: 'Fish', severity: Severity.med },
-        { name: 'Sesame', severity: Severity.low },
+        { itemName: 'Fish', severity: Severity.med },
+        { itemName: 'Sesame', severity: Severity.low },
       ],
     },
   ]
@@ -90,7 +90,9 @@ export function PromptPage() {
   }, [snapshotData])
 
   const profiles: AllergenProfile[] = sampleAllergenProfiles
-  const ownerProfile: Allergy[] = [{ name: 'Gluten', severity: Severity.high }]
+  const ownerProfile: Allergy[] = [
+    { itemName: 'Gluten', severity: Severity.high },
+  ]
 
   if (report && !reportIsLoading) {
     return <PromptResults message={report.message} data={report.data} />
@@ -157,9 +159,9 @@ export function PromptPage() {
                 <Carousel withIndicators slideSize="200px" slideGap="xs" loop>
                   {profiles.map((profile: AllergenProfile, index) => {
                     return (
-                      <Carousel.Slide key={profile.profileName + `${index}`}>
+                      <Carousel.Slide key={profile.name + `${index}`}>
                         <AllergyCard
-                          profileName={profile.profileName}
+                          profileName={profile.name}
                           allergyList={profile.allergies}
                         />
                       </Carousel.Slide>
@@ -228,13 +230,7 @@ export function PromptPage() {
       >
         <Stack>
           {profiles.map((profile, index) => {
-            return (
-              <Checkbox
-                key={index}
-                checked={true}
-                label={profile.profileName}
-              />
-            )
+            return <Checkbox key={index} checked={true} label={profile.name} />
           })}
           <Button onClick={close} color="black">
             Done

@@ -10,6 +10,7 @@ import {
   ScrollArea,
   List,
   ListItem,
+  LoadingOverlay,
 } from '@mantine/core'
 import styles from './Profile.module.css'
 import { Allergy } from '@base/types'
@@ -19,6 +20,7 @@ import { appHeight } from '@base/theme/theme'
 import { Carousel } from '@mantine/carousel'
 // import { useDisclosure } from '@mantine/hooks'
 import { useLogoutMutation } from '@base/popup/api/auth'
+import { useActiveProfileQuery, useProfilesQuery } from '@base/popup/api/user'
 
 interface ProfileDataProps {
   profile: AllergenProfile
@@ -63,7 +65,7 @@ function ProfileData({ profile }: ProfileDataProps) {
       p="lg"
     >
       <Stack gap={'5px'} w={'100%'}>
-        <Title order={2}>{profile.profileName}</Title>
+        <Title order={2}>{profile.name}</Title>
         <List>
           {profile.allergies.map((allergy, index) => {
             return (
@@ -73,7 +75,7 @@ function ProfileData({ profile }: ProfileDataProps) {
                   c={getColor(allergy.severity).root}
                   fw={'500'}
                 >
-                  {allergy.name}
+                  {allergy.itemName}
                 </Text>{' '}
                 <Text size="xs" display={'inline'} fs={'italic'}>
                   ({displayLevel(allergy.severity)})
@@ -89,49 +91,18 @@ function ProfileData({ profile }: ProfileDataProps) {
 
 export default function ProfilePage() {
   const { mutate: logout } = useLogoutMutation()
+  const { data: activeUser, isLoading: activeUserIsLoading } =
+    useActiveProfileQuery()
+  const { status, isLoading } = useProfilesQuery()
   // const [openedProfiles, { openProfiles, closeProfiles }] = useDisclosure(false)
 
-  const firstName = 'User'
-  const allergies: Allergy[] = [
-    { name: 'Fish', severity: Severity.med },
-    { name: 'Sesame', severity: Severity.low },
-  ]
+  if (activeUserIsLoading || !activeUser?.data) {
+    console.log('active', activeUser)
+    return <LoadingOverlay />
+  }
 
-  const sampleAllergenProfiles: AllergenProfile[] = [
-    {
-      profileName: 'John Doe',
-      allergies: [
-        { name: 'Peanuts', severity: Severity.high },
-        { name: 'Milk', severity: Severity.low },
-      ],
-    },
-    {
-      profileName: 'Jane Smith',
-      allergies: [
-        { name: 'Shellfish', severity: Severity.high },
-        { name: 'Eggs', severity: Severity.med },
-      ],
-    },
-    {
-      profileName: 'Alice Johnson',
-      allergies: [
-        { name: 'Wheat', severity: Severity.med },
-        { name: 'Soy', severity: Severity.low },
-      ],
-    },
-    {
-      profileName: 'Mark Lee',
-      allergies: [{ name: 'Tree Nuts', severity: Severity.high }],
-    },
-    {
-      profileName: 'Emily Chen',
-      allergies: [
-        { name: 'Fish', severity: Severity.med },
-        { name: 'Sesame', severity: Severity.low },
-      ],
-    },
-  ]
-  const profiles = sampleAllergenProfiles
+  const { firstName, allergies } = activeUser.data
+  const profiles: AllergenProfile[] = []
   return (
     <ScrollArea h={appHeight}>
       <Stack>
@@ -227,6 +198,15 @@ export default function ProfilePage() {
             >
               Add allergens for your friends, family, coworkers{' '}
             </Text>
+            <Button
+              hidden={profiles.length > 0}
+              c={'black'}
+              color="gray.4"
+              fullWidth
+              mt={'md'}
+            >
+              +
+            </Button>
             <Carousel
               orientation="vertical"
               withIndicators

@@ -1,7 +1,7 @@
 import type { Allergy } from './Allergy'
 
 interface AllergenProfile {
-  profileName: string
+  name: string
   allergies: Allergy[]
 }
 

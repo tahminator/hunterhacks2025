@@ -1,8 +1,8 @@
-import { Severity } from "./Severity"
+import { Severity } from './Severity'
 
 interface Allergy {
-    name:string,
-    severity:Severity
+  itemName: string
+  severity: Severity
 }
 
-export type {Allergy}
+export type { Allergy }
