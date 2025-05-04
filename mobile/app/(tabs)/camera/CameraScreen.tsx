@@ -14,6 +14,7 @@ import {
   StatusBar,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
 import MaskedView from "@react-native-masked-view/masked-view";
@@ -23,6 +24,7 @@ import { useProfilesQuery } from "@/apis/queries/profiles";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
 import { useAuthQuery } from "@/apis/queries/auth";
+import { toDisplaySeverity } from "@/lib/severity";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.43;
@@ -434,18 +436,16 @@ export default function CameraScreen() {
             <Text style={styles.profilesSubtitle}>
               Just making sure, we know you can't eat...
             </Text>
-            <View style={styles.allergenBox}>
-              <Text style={styles.allergenName}>Gluten</Text>
-              <View style={styles.severityIndicator}>
-                <Text style={styles.severityText}>Severe</Text>
+            {profiles?.at(0)?.allergies.map((allergy, index) => (
+              <View style={styles.allergenBox} key={index}>
+                <Text style={styles.allergenName}>{allergy.itemName}</Text>
+                <View style={styles.severityIndicator}>
+                  <Text style={styles.severityText}>
+                    {toDisplaySeverity(allergy.severity)}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.allergenBox}>
-              <Text style={styles.allergenName}>Shellfish</Text>
-              <View style={styles.severityIndicator}>
-                <Text style={styles.severityText}>Severe</Text>
-              </View>
-            </View>
+            ))}
           </>
         ) : (
           <>
@@ -501,13 +501,22 @@ export default function CameraScreen() {
             style={[
               styles.checkAllergensButton,
               !isProfileToggleOn && { marginRight: 8 },
-              mutateStatus === "pending" && { opacity: 0.3 }, // manually dim
+              mutateStatus === "pending" && { opacity: 0.5 }, // manually dim
             ]}
             onPress={onSubmit}
             activeOpacity={1} // keep this 1 so the manual style takes effect
             disabled={mutateStatus === "pending"}
           >
-            <Text style={styles.checkAllergensText}>Check Allergens</Text>
+            <Text style={styles.checkAllergensText}>
+              {mutateStatus === "pending" && (
+                <ActivityIndicator
+                  size="small"
+                  color="#00000"
+                  style={{ marginLeft: 8 }}
+                />
+              )}{" "}
+              Check Allergens
+            </Text>
           </TouchableOpacity>
 
           {!isProfileToggleOn && (
