@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../../../lib/apiFetch";
 
 export const useAuthQuery = () => {
@@ -39,6 +39,27 @@ export const useAuthQuery = () => {
         };
       };
       return data;
+    },
+  });
+};
+
+export const useGuestLoginMutation = () => {
+  const query = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const res = await apiFetch("/api/auth/guest", {
+        method: "POST",
+      });
+
+      return (await res.json()) as {
+        message: string;
+      };
+    },
+    onSettled: () => {
+      query.invalidateQueries({
+        queryKey: ["auth", "@me"],
+      });
     },
   });
 };
