@@ -12,6 +12,7 @@ import {
   Title,
   Modal,
   Checkbox,
+  LoadingOverlay,
 } from '@mantine/core'
 import { useContext, useEffect, useMemo, useState } from 'react'
 // import { useNavigate } from 'react-router-dom'
@@ -29,12 +30,18 @@ import WaveSmURL from './wave.sm.svg'
 import { appHeight } from '@base/theme/theme'
 import { Carousel } from '@mantine/carousel'
 import { ImageContext } from '@base/popup/contexts/ImageContext'
+import { useReportMutation } from '@base/popup/api/report'
 
 export function PromptPage() {
   const { snapshotData } = useContext(ImageContext)
   const [resText, setResText] = useState('')
   const [opened, { open, close }] = useDisclosure(false)
   const [isOnlyUser, setIsOnlyUsers] = useState(true)
+  const {
+    mutate: generateReport,
+    data: report,
+    isPending: reportIsLoading,
+  } = useReportMutation()
 
   const sampleAllergenProfiles: AllergenProfile[] = [
     {
@@ -84,8 +91,13 @@ export function PromptPage() {
   const profiles: AllergenProfile[] = sampleAllergenProfiles
   const ownerProfile: Allergy[] = [{ name: 'Gluten', severity: Severity.high }]
 
+  if (report && !reportIsLoading) {
+    return <PromptResults report={report} />
+  }
+
   return (
     <Box style={{ overflow: 'hidden' }}>
+      <LoadingOverlay visible={reportIsLoading} />
       <ScrollArea h={appHeight} pb={'2px'}>
         <Stack>
           <Box h={'150px'} bg={'rgba(0,0,0,1)'} pos={'relative'}>
@@ -163,7 +175,18 @@ export function PromptPage() {
               mt={'sm'}
               px={'sm'}
             >
-              <Button flex={1} color={'olivine'} fullWidth>
+              <Button
+                onClick={() =>
+                  generateReport({
+                    restaurantName: resText,
+                    image: snapshotData,
+                  })
+                }
+                flex={1}
+                color={'olivine'}
+                fullWidth
+                disabled={resText.length < 4}
+              >
                 Check Allergens
               </Button>
               <Box hidden={isOnlyUser}>
@@ -228,7 +251,6 @@ export default function PromptWrapper() {
   const handleMessage = (request: any) => {
     if (request.target === 'check-image') {
       console.log('react received message', request)
-      // navigate('/prompt')
 
       const { dataUrl, x, y, w, h } = request.data
       const image = new window.Image() as HTMLImageElement
@@ -250,7 +272,7 @@ export default function PromptWrapper() {
   useEffect(() => {
     // Do not remove, establishes message passing
     chrome.runtime.sendMessage({ action: 'TEST_USER' }).then((res) => {
-      console.log(res)
+      console.log('ping', res)
     })
     chrome.runtime.onMessage.addListener(handleMessage)
     return () => {

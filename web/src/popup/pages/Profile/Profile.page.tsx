@@ -15,11 +15,10 @@ import styles from './Profile.module.css'
 import { Allergy } from '@base/types'
 import AllergyItem from '@base/popup/components/AllergyItem'
 import { Severity, AllergenProfile } from '@base/types'
-import { useContext } from 'react'
-import { AuthContext } from '@base/popup/contexts/AuthContext'
 import { appHeight } from '@base/theme/theme'
 import { Carousel } from '@mantine/carousel'
-import { useDisclosure } from '@mantine/hooks'
+// import { useDisclosure } from '@mantine/hooks'
+import { useLogoutMutation } from '@base/popup/api/auth'
 
 interface ProfileDataProps {
   profile: AllergenProfile
@@ -79,9 +78,9 @@ function ProfileData({ profile }: ProfileDataProps) {
 }
 
 export default function ProfilePage() {
-  const [openedProfiles, { openProfiles, closeProfiles }] = useDisclosure(false)
+  const { mutate: logout } = useLogoutMutation()
+  // const [openedProfiles, { openProfiles, closeProfiles }] = useDisclosure(false)
 
-  const { logoutClient } = useContext(AuthContext)
   const firstName = 'User'
   const allergies: Allergy[] = [
     { name: 'Fish', severity: Severity.med },
@@ -133,7 +132,7 @@ export default function ProfilePage() {
             </Title>
             <Group pos="absolute" right={'30px'} flex={1}>
               <ActionIcon
-                onClick={() => logoutClient()}
+                onClick={() => logout()}
                 size={'lg'}
                 pl={'auto'}
                 c={'black'}
@@ -238,7 +237,7 @@ export default function ProfilePage() {
                       color="gray"
                       fullWidth
                       mt={'md'}
-                      onClick={() => openProfiles()}
+                      // onClick={() => openProfiles()}
                     >
                       Add Profile
                     </Button>

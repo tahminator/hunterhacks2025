@@ -27,7 +27,11 @@ chrome.runtime.onMessage.addListener((message) => {
       .captureVisibleTab(null!, { format: 'png' })
       .then(async (dataUrl) => {
         console.log('Sending data...', dataUrl)
-        await chrome.action.openPopup()
+        try {
+          await chrome.action.openPopup()
+        } catch (err) {
+          console.log(err)
+        }
         chrome.runtime
           .sendMessage({
             target: 'check-image',
