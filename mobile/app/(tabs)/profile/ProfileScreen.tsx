@@ -14,9 +14,11 @@ import AllergyDashboard from '../../../components/profiles/AllergyDashboard';
 import ProfileCard from '../../../components/profiles/ProfileCard';
 import AddAllergyModal from '../../../components/profiles/AllergyModal';
 import AddOtherAllergenProfileModal from '../../../components/profiles/ProfileAdd';
+import { useAuthQuery } from '../../../apis/queries/auth';
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
+  const { data: envelope, status } = useAuthQuery();
   const [scrollY, setScrollY] = useState(0);
   const [showAddAllergyModal, setShowAddAllergyModal] = useState(false);
   const [showOtherProfileModal, setShowOtherProfileModal] = useState(false);
@@ -61,7 +63,15 @@ export default function ProfileScreen() {
 
   const handleRemoveProfile = (index: number) => {
     setProfiles(prev => prev.filter((_, i) => i !== index));
-  };
+  }
+
+  // Loading state
+  if (status !== "success" || !envelope) {
+    return <Text>Loading…</Text>;
+  }
+
+  // Safely access user profile data with optional chaining and defaults
+  const userName = envelope?.data?.user?.activeProfile?.firstName || 'User';
 
   return (
     <View style={{ flex: 1 }}>
@@ -78,7 +88,7 @@ export default function ProfileScreen() {
           {mainAllergies.map((a, i) => (
             <AllergyDashboard
               key={i}
-              name={a.name}
+              name={userName}
               severity={['Severe', 'Medium', 'Slight'].includes(a.severity) ? a.severity as 'Severe' | 'Medium' | 'Slight' : 'Slight'}
               onRemove={() =>
                 setMainAllergies(prev => prev.filter((_, idx) => idx !== i))
