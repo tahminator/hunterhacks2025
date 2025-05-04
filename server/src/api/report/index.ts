@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import { reportSchema } from "@/lib/schema/report";
 import { severitySchema } from "@/lib/schema/allergies";
+import { AllergySeverity } from "@prisma/client";
 
 export const reportRouter = Router();
 
@@ -48,15 +49,6 @@ reportRouter.post("/generate", multer.single("image"), async (req, res) => {
   if (!req.file) {
     res.status(400).json({
       message: "No file found.",
-    });
-    return;
-  }
-
-  const extension = req.file.originalname.split(".")[1];
-
-  if (!supportedImageTypes.includes(extension)) {
-    res.status(400).json({
-      message: "File doesn't have a valid extension.",
     });
     return;
   }
