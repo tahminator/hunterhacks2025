@@ -1,3 +1,4 @@
+import { allergiesSchema } from "@/apis/schema/allergies";
 import { z } from "zod";
 
 export const newProfileSchema = z.object({

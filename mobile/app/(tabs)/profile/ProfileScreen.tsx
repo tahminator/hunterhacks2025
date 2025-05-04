@@ -16,6 +16,8 @@ import AddAllergyModal from "../../../components/profiles/AllergyModal";
 import AddOtherAllergenProfileModal from "../../../components/profiles/ProfileAdd";
 import { useLogoutMutation } from "@/apis/queries/auth";
 import { useRouter } from "expo-router";
+import { z } from "zod";
+import { severitySchema } from "@/apis/schema/allergies";
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
@@ -26,13 +28,21 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const [mainAllergies, setMainAllergies] = useState<
-    { name: string; severity: string; color?: string }[]
+    {
+      itemName: string;
+      severity: z.infer<typeof severitySchema>;
+      color?: string;
+    }[]
   >([]);
 
   const [profiles, setProfiles] = useState<
     {
       name: string;
-      allergies: { name: string; severity: string; color?: string }[];
+      allergies: {
+        itemName: string;
+        severity: z.infer<typeof severitySchema>;
+        color?: string;
+      }[];
     }[]
   >([]);
 
@@ -47,30 +57,6 @@ export default function ProfileScreen() {
     } else {
       setScrollY(offsetY);
     }
-  };
-
-  const handleAddOrEditProfile = (profile: {
-    username: string;
-    profileName: string;
-    allergies: { name: string; severity: string; color?: string }[];
-  }) => {
-    if (editingIndex !== null) {
-      setProfiles((prev) => {
-        const updated = [...prev];
-        updated[editingIndex] = {
-          name: profile.profileName,
-          allergies: profile.allergies,
-        };
-        return updated;
-      });
-    } else {
-      setProfiles((prev) => [
-        ...prev,
-        { name: profile.profileName, allergies: profile.allergies },
-      ]);
-    }
-    setShowOtherProfileModal(false);
-    setEditingIndex(null);
   };
 
   const handleRemoveProfile = (index: number) => {
@@ -100,7 +86,7 @@ export default function ProfileScreen() {
           {mainAllergies.map((a, i) => (
             <AllergyDashboard
               key={i}
-              name={a.name}
+              name={a.itemName}
               severity={
                 ["Severe", "Medium", "Slight"].includes(a.severity)
                   ? (a.severity as "Severe" | "Medium" | "Slight")
@@ -173,10 +159,6 @@ export default function ProfileScreen() {
           setShowOtherProfileModal(false);
           setEditingIndex(null);
         }}
-        onSubmit={handleAddOrEditProfile}
-        initialProfileName={
-          editingIndex !== null ? profiles[editingIndex].name : ""
-        }
         initialAllergies={
           editingIndex !== null ? profiles[editingIndex].allergies : []
         }

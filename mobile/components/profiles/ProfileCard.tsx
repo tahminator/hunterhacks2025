@@ -1,49 +1,56 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
-
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { z } from "zod";
+import { severitySchema } from "@/apis/schema/allergies";
 
 type Props = {
   name: string;
-  allergies: { name: string; severity: string; color?: string }[];
+  allergies: {
+    itemName: string;
+    severity: z.infer<typeof severitySchema>;
+    color?: string;
+  }[];
   onEdit: () => void;
   onDelete: () => void;
 };
 
 const severityGradients: Record<string, [string, string]> = {
-  Severe: ['#E66D57', '#4B0505'],
-  Medium: ['#f5a623', '#d97706'],
-  Slight: ['#a8e063', '#56ab2f'],
+  Severe: ["#E66D57", "#4B0505"],
+  Medium: ["#f5a623", "#d97706"],
+  Slight: ["#a8e063", "#56ab2f"],
 };
 
-export default function ProfileCard({
-  name,
-  allergies,
-  onEdit,
-}: Props) {
+export default function ProfileCard({ name, allergies, onEdit }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.leftSection}>
         <Text style={styles.name}>{name}</Text>
         {allergies?.map((a, i) => {
-          const gradient = severityGradients[a.severity] || ['#888', '#666'];
+          const gradient = severityGradients[a.severity] || ["#888", "#666"];
           return (
             <View key={i} style={styles.allergyRow}>
-              <Text style={[styles.allergyText, { color: a.color }]}>• {a.name} </Text>
-              <MaskedView maskElement={<Text style={styles.level}>({a.severity})</Text>}>
+              <Text style={[styles.allergyText, { color: a.color }]}>
+                • {a.itemName}{" "}
+              </Text>
+              <MaskedView
+                maskElement={<Text style={styles.level}>({a.severity})</Text>}
+              >
                 <LinearGradient
                   colors={gradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                 >
-                  <Text style={[styles.level, { opacity: 0 }]}>({a.severity})</Text>
+                  <Text style={[styles.level, { opacity: 0 }]}>
+                    ({a.severity})
+                  </Text>
                 </LinearGradient>
               </MaskedView>
             </View>
@@ -52,7 +59,7 @@ export default function ProfileCard({
       </View>
 
       <ImageBackground
-        source={require('../../assets/images/Vector.png')}
+        source={require("../../assets/images/Vector.png")}
         style={styles.editSection}
         resizeMode="cover"
         imageStyle={styles.swooshImage}
@@ -67,11 +74,11 @@ export default function ProfileCard({
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    backgroundColor: "#fff",
     borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
@@ -83,8 +90,8 @@ const styles = StyleSheet.create({
   },
   editSection: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     minWidth: 80,
   },
   swooshImage: {
@@ -92,31 +99,31 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
   },
   editButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
   },
   editText: {
-    color: '#000',
-    fontWeight: 'bold',
+    color: "#000",
+    fontWeight: "bold",
     fontSize: 16,
   },
   name: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   allergyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 2,
   },
   allergyText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   level: {
-    fontWeight: 'normal',
+    fontWeight: "normal",
     fontSize: 14,
     marginLeft: 4,
   },
