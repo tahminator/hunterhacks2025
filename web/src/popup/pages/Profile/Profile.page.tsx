@@ -11,18 +11,16 @@ import {
   List,
   ListItem,
   LoadingOverlay,
-  Drawer,
   Modal,
 } from '@mantine/core'
 import styles from './Profile.module.css'
-import { Allergy } from '@base/types'
 import AllergyItem from '@base/popup/components/AllergyItem'
 import { Severity, AllergenProfile } from '@base/types'
 import { appHeight } from '@base/theme/theme'
 import { Carousel } from '@mantine/carousel'
 // import { useDisclosure } from '@mantine/hooks'
 import { useLogoutMutation } from '@base/popup/api/auth'
-import { useActiveProfileQuery, useProfilesQuery } from '@base/popup/api/user'
+import { useActiveProfileQuery } from '@base/popup/api/user'
 import { useDisclosure } from '@mantine/hooks'
 import { AllergyAddCard } from './Allergy.add.card'
 

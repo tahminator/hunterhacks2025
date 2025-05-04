@@ -14,7 +14,8 @@ export const useReportMutation = () => {
       isJustMe: boolean
     }) => {
       const response = await axios.post(
-        `${HOSTNAME}/api/report/generate/test/1`,
+        `${HOSTNAME}/api/report/generate`,
+        // `${HOSTNAME}/api/report/generate/test/1`,
         {
           restaurantName,
           image,

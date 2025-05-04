@@ -8,7 +8,6 @@ import {
   Box,
   Image,
   Button,
-  Modal,
   Drawer,
 } from '@mantine/core'
 
