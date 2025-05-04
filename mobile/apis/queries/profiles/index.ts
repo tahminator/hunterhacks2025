@@ -53,10 +53,16 @@ export const useNewProfileMutation = () => {
         };
       };
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", "all"],
+      });
+    },
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["profile", "all"],
       });
+
     },
   });
 };
