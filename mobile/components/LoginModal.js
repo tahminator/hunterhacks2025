@@ -15,6 +15,7 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useGuestLoginMutation } from "@/apis/queries/auth";
 
 const { height } = Dimensions.get("window");
 
