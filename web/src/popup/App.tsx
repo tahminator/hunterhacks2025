@@ -44,7 +44,6 @@ function App() {
                   {/* <Route path="/" element={<LandingPage />} /> */}
                   <Route path="/" element={<RenderedPopup />} />
                   {/* <Route path="/prompt" element={<PromptPage />} /> */}
-                  <Route path="/profile" element={<span>Profile</span>} />
                 </Routes>
               </MemoryRouter>
             </Box>
