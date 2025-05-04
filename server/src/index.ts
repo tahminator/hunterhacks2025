@@ -18,13 +18,8 @@ app.use(morgan("tiny"));
 
 app.use("/api", apiRouter);
 
-const server = app.listen(3000, "0.0.0.0", () => {
-  const serverMetadata = server.address() as {
-    address: string;
-    port: number;
-  };
-
+app.listen(3000, "0.0.0.0", () => {
   const ip = getLocalExternalIp() ?? "localhost";
   console.log(`Server listening on http://${ip}:3000`);
-  console.log(`Server listening on http://127.0.0.1:3000`);
+  console.log(`Server listening on http://127.0.:3000`);
 });
