@@ -1,13 +1,12 @@
-import {  useQuery } from '@tanstack/react-query';
-import { apiFetch } from '../../../lib/apiFetch';
-
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "../../../lib/apiFetch";
 
 export const useAuthQuery = () => {
   return useQuery({
     queryKey: ["auth", "@me"],
     queryFn: async () => {
       const res = await apiFetch("/api/auth/@me");
-      const data = await res.json() as {
+      const data = (await res.json()) as {
         message: string;
         data: {
           user: {
@@ -39,9 +38,7 @@ export const useAuthQuery = () => {
           };
         };
       };
-      
+      return data;
     },
   });
 };
-
-
