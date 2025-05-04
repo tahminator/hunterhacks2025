@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "../../../lib/apiFetch";
 import { z } from "zod";
 import { newProfileSchema } from "@/apis/schema/profile";
+import { severitySchema } from "@/apis/schema/allergies";
 
 export const useProfilesQuery = () => {
   return useQuery({
@@ -10,8 +11,26 @@ export const useProfilesQuery = () => {
       const res = await apiFetch("/api/profile/all");
       const data = (await res.json()) as {
         message: string;
+        data: {
+          firstName: string;
+          lastName: string;
+          allergies: {
+            itemName: string;
+            severity: z.infer<typeof severitySchema>;
+            color?: string;
+          }[];
+        }[];
       };
       return data;
+    },
+    select: (data) => {
+      return {
+        ...data,
+        data: data.data.map((profile) => ({
+          ...profile,
+          name: `${profile.firstName} ${profile.lastName}`,
+        })),
+      };
     },
   });
 };
@@ -63,7 +82,6 @@ export const useNewProfileMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["profile", "all"],
       });
-
     },
   });
 };

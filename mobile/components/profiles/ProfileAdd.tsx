@@ -30,6 +30,11 @@ type Allergy = {
 type Props = {
   visible: boolean;
   onClose: () => void;
+  onSubmit: (profileData: {
+    name: string;
+    allergies: Allergy[];
+  }) => void;
+  initialProfileName: string;
   initialFirstName?: string;
   initialLastName?: string;
   initialAllergies?: Allergy[];
@@ -39,6 +44,8 @@ type Props = {
 export default function ProfileAdd({
   visible,
   onClose,
+  onSubmit,
+  initialProfileName = "",
   initialFirstName = "",
   initialLastName = "",
   initialAllergies = [],
@@ -65,11 +72,17 @@ export default function ProfileAdd({
 
   useEffect(() => {
     if (visible) {
-      setFirstName(initialFirstName);
-      setLastName(initialLastName);
+      if (initialProfileName && initialProfileName.includes(" ")) {
+        const [first, ...rest] = initialProfileName.split(" ");
+        setFirstName(first || initialFirstName);
+        setLastName(rest.join(" ") || initialLastName);
+      } else {
+        setFirstName(initialFirstName);
+        setLastName(initialLastName);
+      }
       setAllergies(initialAllergies);
     }
-  }, [visible, initialFirstName, initialLastName, initialAllergies]);
+  }, [visible, initialProfileName, initialFirstName, initialLastName, initialAllergies]);
 
   const removeAllergy = (index: number) => {
     setAllergies((prev) => prev.filter((_, i) => i !== index));
@@ -93,24 +106,32 @@ export default function ProfileAdd({
     }
   };
 
-  const onSubmit = () => {
-    mutate({
-      firstName,
-      lastName,
-      allergies: allergies.map(({ severity, itemName }) => ({
-        severity: severityTranslater(severity),
-        itemName,
-      })),
-    });
-  };
-
   const handleDone = () => {
-    if (!firstName.trim() || !lastName.trim()) {
-      alert("Please fill in both first and last name.");
+    if (!firstName.trim()) {
+      alert("Please fill in at least the first name.");
       return;
     }
-    onSubmit();
-    onClose();
+
+
+    const profileData = {
+      name: `${firstName} ${lastName}`.trim(),
+      allergies: allergies
+    };
+
+    onSubmit(profileData);
+
+    try {
+      mutate({
+        firstName,
+        lastName,
+        allergies: allergies.map(({ severity, itemName }) => ({
+          severity: severityTranslater(severity),
+          itemName,
+        })),
+      });
+    } catch (error) {
+      console.error("Error calling API:", error);
+    }
   };
 
   return (

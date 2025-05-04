@@ -28,7 +28,7 @@ export const useAuthQuery = () => {
                     id: string;
                     profileId: string;
                     itemName: string;
-                    severity: "low" | "medium" | "high";
+                    severity: "low" | "med" | "high";
                   }[];
                 };
               }
@@ -42,6 +42,28 @@ export const useAuthQuery = () => {
             | undefined;
         };
       };
+      return data;
+    },
+    select: (data) => {
+      const user = data.data.user;
+      if (user && user.activeProfile) {
+        const { firstName, lastName, ...restProfile } = user.activeProfile;
+        return {
+          ...data,
+          data: {
+            ...data.data,
+            user: {
+              ...user,
+              activeProfile: {
+                ...restProfile,
+                firstName,
+                lastName,
+                name: `${firstName} ${lastName}`,
+              },
+            },
+          },
+        };
+      }
       return data;
     },
   });

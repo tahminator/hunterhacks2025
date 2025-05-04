@@ -23,9 +23,9 @@ type Props = {
 };
 
 const severityGradients: Record<string, [string, string]> = {
-  Severe: ["#E66D57", "#4B0505"],
-  Medium: ["#f5a623", "#d97706"],
-  Slight: ["#a8e063", "#56ab2f"],
+  low: ["#E66D57", "#4B0505"],
+  med: ["#f5a623", "#d97706"],
+  high: ["#a8e063", "#56ab2f"],
 };
 
 export default function ProfileCard({ name, allergies, onEdit }: Props) {
