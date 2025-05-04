@@ -6,13 +6,17 @@ import '@mantine/core/styles.css'
 import '@mantine/carousel/styles.css'
 import { appHeight, appWidth } from '@base/theme/theme'
 import { PromptPage } from '@pages/Prompt/Prompt.page'
-import { Severity } from '@base/types'
-import AllergyCard from './components/AllergyCard'
 
 function App() {
   return (
     <MantineProvider theme={AppTheme}>
-      <Box w={appWidth} h={appHeight} bd={'solid 1px black'} pos={'absolute'}>
+      <Box
+        w={appWidth}
+        h={appHeight}
+        bd={'solid 1px black'}
+        pos={'absolute'}
+        style={{ overflow: 'hidden' }}
+      >
         <MemoryRouter>
           <Routes>
             {/* <Route path="/" element={<LandingPage />} /> */}
