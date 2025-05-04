@@ -9,7 +9,6 @@ import {
   Text,
   ScrollArea,
   List,
-  Image,
   ListItem,
 } from '@mantine/core'
 import styles from './Profile.module.css'
@@ -19,7 +18,8 @@ import { Severity, AllergenProfile } from '@base/types'
 import { useContext } from 'react'
 import { AuthContext } from '@base/popup/contexts/AuthContext'
 import { appHeight } from '@base/theme/theme'
-import ProfileWaveURL from './profile.wave.svg'
+import { Carousel } from '@mantine/carousel'
+import { useDisclosure } from '@mantine/hooks'
 
 interface ProfileDataProps {
   profile: AllergenProfile
@@ -74,14 +74,13 @@ function ProfileData({ profile }: ProfileDataProps) {
           })}
         </List>
       </Stack>
-      {/* <Box pos={'absolute'} right={'0'} top={'0'}>
-        <Image src={ProfileWaveURL}></Image>
-      </Box> */}
     </Paper>
   )
 }
 
 export default function ProfilePage() {
+  const [openedProfiles, { openProfiles, closeProfiles }] = useDisclosure(false)
+
   const { logoutClient } = useContext(AuthContext)
   const firstName = 'User'
   const allergies: Allergy[] = [
@@ -219,9 +218,34 @@ export default function ProfilePage() {
             >
               Add allergens for your friends, family, coworkers{' '}
             </Text>
-            <Stack mb={'lg'}>
-              <ProfileData profile={profiles[0]} />
-            </Stack>
+            <Carousel
+              orientation="vertical"
+              withIndicators
+              slideGap="md"
+              mb={'lg'}
+              height={'200px'}
+              align="start"
+              slideSize={'auto'}
+              loop
+            >
+              {profiles.map((profile: AllergenProfile, index) => {
+                return (
+                  <Carousel.Slide key={index}>
+                    <ProfileData profile={profile} />
+                    <Button
+                      variant="outline"
+                      c={'black'}
+                      color="gray"
+                      fullWidth
+                      mt={'md'}
+                      onClick={() => openProfiles()}
+                    >
+                      Add Profile
+                    </Button>
+                  </Carousel.Slide>
+                )
+              })}
+            </Carousel>
           </Stack>
         </Box>
       </Stack>
