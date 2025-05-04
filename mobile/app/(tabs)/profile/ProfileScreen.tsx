@@ -13,12 +13,12 @@ import Header from "../../../components/profiles/Header";
 import AllergyDashboard from "../../../components/profiles/AllergyDashboard";
 import ProfileCard from "../../../components/profiles/ProfileCard";
 import AddAllergyModal from "../../../components/profiles/AllergyModal";
-import AddOtherAllergenProfileModal from "../../../components/profiles/ProfileAdd";
-import { useLogoutMutation } from "@/apis/queries/auth";
+import ProfileAdd from "../../../components/profiles/ProfileAdd";
+import { useLogoutMutation , useAuthQuery } from "@/apis/queries/auth";
 import { useRouter } from "expo-router";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
-import { useAuthQuery } from "@/apis/queries/auth";
+
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
@@ -165,25 +165,37 @@ export default function ProfileScreen() {
         }}
       />
 
-      <AddOtherAllergenProfileModal
-        visible={showOtherProfileModal}
-        onClose={() => {
+<ProfileAdd
+  visible={showOtherProfileModal}
+  onClose={() => {
+    setShowOtherProfileModal(false);
+    setEditingIndex(null);
+  }}
+  initialAllergies={editingIndex !== null ? profiles[editingIndex].allergies : []}
+  initialProfileName={editingIndex !== null ? profiles[editingIndex].name : ""}
+  onSubmit={(updatedProfile) => {
+    if (editingIndex !== null) {
+      setProfiles((prev) =>
+        prev.map((profile, index) =>
+          index === editingIndex ? updatedProfile : profile
+        )
+      );
+    } else {
+      setProfiles((prev) => [...prev, updatedProfile]);
+    }
+    setShowOtherProfileModal(false);
+    setEditingIndex(null);
+  }}
+  onDelete={
+    editingIndex !== null
+      ? () => {
+          handleRemoveProfile(editingIndex);
           setShowOtherProfileModal(false);
           setEditingIndex(null);
-        }}
-        initialAllergies={
-          editingIndex !== null ? profiles[editingIndex].allergies : []
         }
-        onDelete={
-          editingIndex !== null
-            ? () => {
-                handleRemoveProfile(editingIndex);
-                setShowOtherProfileModal(false);
-                setEditingIndex(null);
-              }
-            : undefined
-        }
-      />
+      : undefined
+  }
+/>
     </View>
   );
 }
