@@ -1,4 +1,5 @@
 import { apiRouter } from "@/api";
+import { getLocalExternalIp } from "@/lib/os";
 import { authMiddleware } from "@/middleware/auth";
 import { cookieParser } from "@/middleware/cookie-parser";
 import "dotenv/config";
@@ -17,15 +18,13 @@ app.use(morgan("tiny"));
 
 app.use("/api", apiRouter);
 
-const server = app.listen(3000, "0.0.0.0");
+const server = app.listen(3000, "0.0.0.0", () => {
+  const serverMetadata = server.address() as {
+    address: string;
+    port: number;
+  };
 
-try {
-  const serverMetadata = server.address() as { address: string; port: number };
-  console.log(
-    `\n\nServer listening on http://${
-      serverMetadata.address === "::" ? "127.0.0.1" : serverMetadata.address
-    }:${serverMetadata.port}`,
-  );
-} catch (e) {
-  console.error(e);
-}
+  const ip = getLocalExternalIp() ?? "localhost";
+  console.log(`Server listening on http://${ip}:3000`);
+  console.log(`Server listening on http://127.0.0.1:3000`);
+});
