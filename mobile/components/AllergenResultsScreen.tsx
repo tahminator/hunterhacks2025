@@ -153,7 +153,10 @@ const AllergenResultsScreen = ({ data }: { data: Data }) => {
                   <TouchableOpacity
                     key={index}
                     style={styles.dropdownItem}
-                    onPress={() => selectProfile(profile)}
+                    onPress={() => {
+                      selectProfile(profile);
+                      toggleDropdown();
+                    }}
                   >
                     <Text
                       style={[
@@ -191,7 +194,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    marginBottom: -60,
+    marginBottom: 60,
   },
   header: {
     height: 180,
