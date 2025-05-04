@@ -1,8 +1,12 @@
+import { authenticateGuest } from '@base/popup/api/authenication'
 import styles from './Landing.module.css'
 import LogoURL from '@assets/Logo.png'
 import { Title, Stack, Text, Group, Box, Image, Button } from '@mantine/core'
+import { useMutation } from '@tanstack/react-query'
 
 import { TypeAnimation } from 'react-type-animation'
+import { useContext } from 'react'
+import { AuthContext } from '@base/popup/contexts/AuthContext'
 
 const TypingText = () => {
   return (
@@ -75,6 +79,8 @@ function GradientOverlay() {
 }
 
 function LandingPage() {
+  const { refetchLogin } = useContext(AuthContext)
+
   const allergens = [
     'Gluten',
     'Peanuts',
@@ -84,6 +90,21 @@ function LandingPage() {
     'Shellfish',
     'Avocados',
   ]
+
+  const mutateGuest = useMutation({
+    mutationFn: () => {
+      return authenticateGuest()
+    },
+  })
+
+  const loginGuest = () => {
+    mutateGuest
+      .mutateAsync()
+      .then(() => refetchLogin())
+      .catch(() => {
+        alert('An error occured. Could not post the announcement.')
+      })
+  }
 
   return (
     <Box h={'100%'} id={styles.landingContainer}>
@@ -107,7 +128,11 @@ function LandingPage() {
             Register
           </Button>
         </Group>
-        <Button variant="outline" color={'rgba(0, 0, 0, 1)'}>
+        <Button
+          onClick={() => loginGuest()}
+          variant="outline"
+          color={'rgba(0, 0, 0, 1)'}
+        >
           Continue As Guest
         </Button>
       </Stack>

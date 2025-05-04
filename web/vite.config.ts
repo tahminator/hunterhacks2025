@@ -10,6 +10,7 @@ export default defineConfig({
       '@popup': path.resolve(__dirname, 'src/popup/'),
       '@pages': path.resolve(__dirname, 'src/popup/pages/'),
       '@components': path.resolve(__dirname, 'src/popup/components/'),
+      '@api': path.resolve(__dirname, 'src/popup/api/'),
       '@assets': path.resolve(__dirname, 'src/assets/'),
     },
   },
@@ -45,6 +46,14 @@ export default defineConfig({
               return 'assets/[name]-[hash].js'
           }
         },
+      },
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
       },
     },
   },
