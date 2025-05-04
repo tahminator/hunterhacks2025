@@ -31,6 +31,9 @@ export const useNewProfileMutation = () => {
           lastName,
           allergies,
         }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       return (await res.json()) as {
