@@ -18,9 +18,12 @@ import { useLogoutMutation } from "@/apis/queries/auth";
 import { useRouter } from "expo-router";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
+import { useAuthQuery } from "@/apis/queries/auth";
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
+  const { data: envelope, status } = useAuthQuery();
+
   const [scrollY, setScrollY] = useState(0);
   const [showAddAllergyModal, setShowAddAllergyModal] = useState(false);
   const [showOtherProfileModal, setShowOtherProfileModal] = useState(false);
@@ -62,6 +65,13 @@ export default function ProfileScreen() {
   const handleRemoveProfile = (index: number) => {
     setProfiles((prev) => prev.filter((_, i) => i !== index));
   };
+  if (status !== "success" || !envelope) {
+    return <Text>Loading…</Text>;
+  }
+  const name = envelope?.data?.user?.activeProfile?.firstName || 'Guest' || envelope?.data?.user?.username;
+  
+
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -72,7 +82,9 @@ export default function ProfileScreen() {
         scrollEventThrottle={16}
       >
         <Header
+          username={name}
           onLogout={() => {
+
             mutate(void 0, {
               onSuccess: () => {
                 router.push("/");
