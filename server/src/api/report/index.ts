@@ -33,7 +33,10 @@ reportRouter.post("/generate", multer.single("image"), async (req, res) => {
     return;
   }
 
-  const { restaurantName } = req.body as { restaurantName: string };
+  const { restaurantName, isJustMe } = req.body as {
+    restaurantName: string;
+    isJustMe: string;
+  };
 
   if (!restaurantName) {
     res.status(400).json({
@@ -75,14 +78,41 @@ ${ocrText}
     `,
   });
 
-  const profiles = await db.profile.findMany({
-    where: {
-      userId: res.locals.user.id,
-    },
-    include: {
-      allergies: true,
-    },
-  });
+  let profiles: ({
+    allergies: {
+      id: string;
+      severity: AllergySeverity;
+      itemName: string;
+      profileId: string;
+    }[];
+  } & {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profileUrl: string;
+    userId: string;
+  })[];
+  if (isJustMe === "1") {
+    profiles = await db.profile.findMany({
+      where: {
+        activeForUser: {
+          id: res.locals.user.id,
+        },
+      },
+      include: {
+        allergies: true,
+      },
+    });
+  } else {
+    profiles = await db.profile.findMany({
+      where: {
+        userId: res.locals.user.id,
+      },
+      include: {
+        allergies: true,
+      },
+    });
+  }
 
   let result: z.infer<typeof reportSchema>[] = [];
 
