@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   ScrollView,
   View,
@@ -14,11 +14,25 @@ import AllergyDashboard from "../../../components/profiles/AllergyDashboard";
 import ProfileCard from "../../../components/profiles/ProfileCard";
 import AddAllergyModal from "../../../components/profiles/AllergyModal";
 import ProfileAdd from "../../../components/profiles/ProfileAdd";
-import { useLogoutMutation , useAuthQuery } from "@/apis/queries/auth";
+import { useLogoutMutation, useAuthQuery } from "@/apis/queries/auth";
 import { useRouter } from "expo-router";
 import { z } from "zod";
 import { severitySchema } from "@/apis/schema/allergies";
+import { useProfilesQuery } from "@/apis/queries/profiles";
 
+type InternalSeverity = "high" | "med" | "low";
+type LabelSeverity = "Severe" | "Medium" | "Slight";
+
+const severityToLabel = (severity: InternalSeverity): LabelSeverity => {
+  switch (severity) {
+    case "high":
+      return "Severe";
+    case "med":
+      return "Medium";
+    case "low":
+      return "Slight";
+  }
+};
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
@@ -29,6 +43,7 @@ export default function ProfileScreen() {
   const [showOtherProfileModal, setShowOtherProfileModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const router = useRouter();
+  const { status: profileStatus, data } = useProfilesQuery();
 
   const [mainAllergies, setMainAllergies] = useState<
     {
@@ -51,6 +66,14 @@ export default function ProfileScreen() {
 
   const { mutate } = useLogoutMutation();
 
+  useEffect(() => {
+    if (profileStatus === "success") {
+      if (data) {
+        setProfiles(data.data);
+      }
+    }
+  }, [data, profileStatus]);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const velocityY = event.nativeEvent.velocity?.y ?? 0;
@@ -61,17 +84,16 @@ export default function ProfileScreen() {
       setScrollY(offsetY);
     }
   };
-
   const handleRemoveProfile = (index: number) => {
     setProfiles((prev) => prev.filter((_, i) => i !== index));
   };
   if (status !== "success" || !envelope) {
     return <Text>Loading…</Text>;
   }
-  const name = envelope?.data?.user?.activeProfile?.firstName || 'Guest' || envelope?.data?.user?.username;
-  
-
-  
+  const name =
+    envelope?.data?.user?.activeProfile?.firstName ||
+    "Guest" ||
+    envelope?.data?.user?.username;
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,7 +106,6 @@ export default function ProfileScreen() {
         <Header
           username={name}
           onLogout={() => {
-
             mutate(void 0, {
               onSuccess: () => {
                 router.push("/");
@@ -99,11 +120,7 @@ export default function ProfileScreen() {
             <AllergyDashboard
               key={i}
               name={a.itemName}
-              severity={
-                ["Severe", "Medium", "Slight"].includes(a.severity)
-                  ? (a.severity as "Severe" | "Medium" | "Slight")
-                  : "Slight"
-              }
+              severity={severityToLabel(a.severity)}
               onRemove={() =>
                 setMainAllergies((prev) => prev.filter((_, idx) => idx !== i))
               }
@@ -165,37 +182,41 @@ export default function ProfileScreen() {
         }}
       />
 
-<ProfileAdd
-  visible={showOtherProfileModal}
-  onClose={() => {
-    setShowOtherProfileModal(false);
-    setEditingIndex(null);
-  }}
-  initialAllergies={editingIndex !== null ? profiles[editingIndex].allergies : []}
-  initialProfileName={editingIndex !== null ? profiles[editingIndex].name : ""}
-  onSubmit={(updatedProfile) => {
-    if (editingIndex !== null) {
-      setProfiles((prev) =>
-        prev.map((profile, index) =>
-          index === editingIndex ? updatedProfile : profile
-        )
-      );
-    } else {
-      setProfiles((prev) => [...prev, updatedProfile]);
-    }
-    setShowOtherProfileModal(false);
-    setEditingIndex(null);
-  }}
-  onDelete={
-    editingIndex !== null
-      ? () => {
-          handleRemoveProfile(editingIndex);
+      <ProfileAdd
+        visible={showOtherProfileModal}
+        onClose={() => {
           setShowOtherProfileModal(false);
           setEditingIndex(null);
+        }}
+        initialAllergies={
+          editingIndex !== null ? profiles[editingIndex].allergies : []
         }
-      : undefined
-  }
-/>
+        initialProfileName={
+          editingIndex !== null ? profiles[editingIndex].name : ""
+        }
+        onSubmit={(updatedProfile) => {
+          if (editingIndex !== null) {
+            setProfiles((prev) =>
+              prev.map((profile, index) =>
+                index === editingIndex ? updatedProfile : profile,
+              ),
+            );
+          } else {
+            setProfiles((prev) => [...prev, updatedProfile]);
+          }
+          setShowOtherProfileModal(false);
+          setEditingIndex(null);
+        }}
+        onDelete={
+          editingIndex !== null
+            ? () => {
+                handleRemoveProfile(editingIndex);
+                setShowOtherProfileModal(false);
+                setEditingIndex(null);
+              }
+            : undefined
+        }
+      />
     </View>
   );
 }
